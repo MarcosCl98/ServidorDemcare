@@ -1,8 +1,8 @@
 package com.demcare.demo.security;
 
 import com.demcare.demo.config.PasswordEncoderBean;
+import com.demcare.demo.entities.User;
 import com.demcare.demo.service.UserService;
-import com.demcare.demo.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,16 +29,16 @@ public class DemcareAuthenticationProvider implements AuthenticationProvider {
         String mail = authentication.getName();
         String passwordWithoutEncode = authentication.getCredentials().toString();
 
-        UserModel userModel = userService.findByMail(mail);
+        User user = userService.findByMail(mail);
 
-        String passwordEncoded = userModel.getPassword();
+        String passwordEncoded = user.getPassword();
 
         PasswordEncoder passwordEncoder = passwordEncoderBean.encoder();
 
         if(passwordEncoder.matches(passwordWithoutEncode, passwordEncoded)) {
             //LOGIN OK, update lastLogin
             Long now = new Date().getTime();
-            userService.update(userModel);
+            userService.update(user);
 
             return new UsernamePasswordAuthenticationToken(
                     mail, passwordWithoutEncode, new ArrayList<>());

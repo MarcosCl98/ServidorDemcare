@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Entity
 @Table(name="user")
 @NoArgsConstructor @AllArgsConstructor @Builder @ToString
-public class UserEntity implements Serializable {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -19,6 +19,10 @@ public class UserEntity implements Serializable {
 
     @Getter@Setter
     private String password;
+
+    @Transient
+    @Getter@Setter
+    private String passwordConfirm;
 
     @Getter@Setter
     private String name;

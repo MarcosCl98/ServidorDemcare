@@ -1,14 +1,14 @@
 package com.demcare.demo.dao;
 
-import com.demcare.demo.entities.UserEntity;
+import com.demcare.demo.entities.User;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserDao extends CrudRepository<UserEntity, Long>, JpaSpecificationExecutor<UserEntity> {
+public interface UserDao extends CrudRepository<User, Long>, JpaSpecificationExecutor<User> {
 
-    UserEntity findByMail(String mail);
+    User findByMail(String mail);
     void deleteByMail(String mail);
 
 }

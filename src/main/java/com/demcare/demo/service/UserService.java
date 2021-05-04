@@ -1,10 +1,13 @@
 package com.demcare.demo.service;
 
-import com.demcare.demo.model.UserModel;
+import com.demcare.demo.entities.User;
+
+import java.util.List;
 
 public interface UserService {
-    UserModel findByMail(String mail);
+    User findByMail(String mail);
     void deleteByMail(String mail);
-    UserModel register(UserModel userEntity);
-    UserModel update(UserModel userEntity);
+    User register(User userEntity);
+    User update(User userEntity);
+    List<User> getUsers();
 }
