@@ -2,9 +2,16 @@
 <nav class="navbar navbar-inverse">
     <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="/user/list">Ver Notas</a></li>
-            <li><a href="/user/add">Agregar Nota</a></li>
-            <li><a href="/mark/filter">Filtrar</a></li>
+            <li><a href="/">Home</a></li>
+            <li id= "users-menu" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Gestión de Usuarios <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/user/add"  th:text="#{nav.addusers}">Agregar Usuario</a></li>
+                    <li><a href="/user/list" th:text="#{nav.showusers}">Ver Usuarios</a></li>
+                </ul>
+            </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
