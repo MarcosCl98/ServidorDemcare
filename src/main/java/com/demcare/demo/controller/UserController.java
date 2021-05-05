@@ -1,6 +1,7 @@
 package com.demcare.demo.controller;
 
 import com.demcare.demo.entities.User;
+import com.demcare.demo.service.RolesService;
 import com.demcare.demo.validators.SingUpFormValidator;
 import com.demcare.demo.service.SecurityService;
 import com.demcare.demo.service.UserService;
@@ -14,6 +15,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.util.HashSet;
+import java.util.Set;
+
 @Controller
 public class UserController extends DemcareController {
 
@@ -21,10 +26,16 @@ public class UserController extends DemcareController {
     private UserService userService;
 
     @Autowired
+    private RolesService rolesService;
+
+    @Autowired
     private SecurityService securityService;
 
     @Autowired
     private SingUpFormValidator signUpFormValidator;
+
+    @Autowired
+    private HttpSession httpSession;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createUser(@ModelAttribute User user){
@@ -39,17 +50,21 @@ public class UserController extends DemcareController {
     }
 
     @RequestMapping(value="/user/add", method=RequestMethod.POST )
-    public String setUser(@RequestParam String nombre,
-                          @RequestParam String apellido1,
-                          @RequestParam String apellido2){
-        return "redirect:/";
+    public String setUser(@Validated User user, BindingResult result, Model
+            model) {
+        signUpFormValidator.validate(user, result);
+        if (result.hasErrors()) {
+            return "singup";
+        }
+        userService.register(user);
+        return "redirect:/home";
     }
 
-    @RequestMapping("/user/add" )
+    @RequestMapping(value="/user/add")
     public String getUser(Model model){
+        model.addAttribute("rolesList", rolesService.getRoles());
         model.addAttribute("user", new User());
-       //TODO: error
-        return "/user/add";
+        return "user/add";
     }
 
     @RequestMapping("/user/list")
@@ -78,7 +93,7 @@ public class UserController extends DemcareController {
         if (result.hasErrors()) {
             return "singup";
         }
-        user.setRole("ROLE_PRUEBA");
+        user.setRole(rolesService.getRoles()[0]);
         userService.register(user);
         securityService.autoLogin(user.getMail(), user.getPasswordConfirm());
         return "redirect:home";

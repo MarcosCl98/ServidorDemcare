@@ -4,7 +4,6 @@ import com.demcare.demo.config.PasswordEncoderBean;
 import com.demcare.demo.dao.UserDao;
 import com.demcare.demo.entities.User;
 import com.demcare.demo.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +17,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
-    //Mapper
-    private ModelMapper modelMapper = new ModelMapper();
+
 
     @Autowired
     private PasswordEncoderBean passwordEncoderBean;
