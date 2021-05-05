@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
             //throw new EEmailExistsException
         }
         user.setPassword(passwordEncoderBean.encoder().encode(user.getPassword()));
-
+        userDao.save(user);
         return user;
     }
 
