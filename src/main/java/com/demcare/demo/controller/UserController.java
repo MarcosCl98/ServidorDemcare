@@ -8,6 +8,7 @@ import com.demcare.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashSet;
-import java.util.Set;
 
 @Controller
 public class UserController extends DemcareController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserDetailsService uderDetailsService;
 
     @Autowired
     private RolesService rolesService;
@@ -104,6 +106,13 @@ public class UserController extends DemcareController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model) {
         return "login";
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String login(@Validated User user, BindingResult result, Model
+            model) {
+        uderDetailsService.loadUserByUsername(user.getMail());
+        return "redirect:home";
     }
 
     @RequestMapping(value = { "/home" }, method = RequestMethod.GET)
