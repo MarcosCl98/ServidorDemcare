@@ -56,6 +56,7 @@ public class UserController extends DemcareController {
         if (result.hasErrors()) {
             return "singup";
         }
+        model.addAttribute("rolesList", rolesService.getRoles());
         userService.register(user);
         return "redirect:/home";
     }
@@ -82,6 +83,7 @@ public class UserController extends DemcareController {
 
     @RequestMapping(value = "/singup", method = RequestMethod.GET)
     public String signup(Model model) {
+        model.addAttribute("rolesList", rolesService.getRoles());
         model.addAttribute("user", new User());
         return "singup";
     }
@@ -93,7 +95,6 @@ public class UserController extends DemcareController {
         if (result.hasErrors()) {
             return "singup";
         }
-        user.setRole(rolesService.getRoles()[0]);
         userService.register(user);
         securityService.autoLogin(user.getMail(), user.getPasswordConfirm());
         return "redirect:home";

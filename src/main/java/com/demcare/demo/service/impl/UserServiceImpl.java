@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
-
+    @Autowired
+    private HttpSession httpSession;
 
     @Autowired
     private PasswordEncoderBean passwordEncoderBean;

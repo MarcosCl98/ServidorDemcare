@@ -87,6 +87,11 @@
             <version>5.4.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
