@@ -4,12 +4,70 @@
         <ul class="nav navbar-nav" sec:authorize="isAuthenticated()">
             <li><a href="/">Home</a></li>
             <li sec:authorize="hasRole('ADMIN')" id= "users-menu" class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.usermanagement}">
                     Gestión de Usuarios <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('ADMIN')"><a href="/user/add"  th:text="#{nav.addusers}">Agregar Usuario</a></li>
+                    <li sec:authorize="hasRole('ADMIN')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
                     <li sec:authorize="hasRole('ADMIN')"><a href="/user/list" th:text="#{nav.showusers}">Ver Usuarios</a></li>
+                    <li sec:authorize="hasRole('ADMIN')"><a href="/user/add"  th:text="#{nav.addusers}">Agregar Usuario</a></li>
+
+                </ul>
+            </li>
+            <li sec:authorize="hasRole('INSTITUCION')" id= "users-menu2" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.usermanagement}">
+                    Gestión de Usuarios <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.invitations}">Invitar usuarios</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/list" th:text="#{nav.include}">Incluir usuarios</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
+                </ul>
+            </li>
+            <li sec:authorize="hasRole('CUIDADOR')" id= "users-menu3" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.usermanagement}">
+                    Gestión de Usuarios <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.register}">Registrar pacientes</a></li>
+                </ul>
+            </li>
+
+            <li sec:authorize="hasRole('CUIDADOR')" id= "profile-menu" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.profile}">
+                    Profile<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.editimage}">Editar imagen</a></li>
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.solicitude}">Solicitar adscripción </a></li>
+                </ul>
+            </li>
+
+            <li sec:authorize="hasRole('JUGADOR')" id= "profile-menu2" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.profile}">
+                    Profile<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li sec:authorize="hasRole('JUGADOR')"><a href="/user/add"  th:text="#{nav.editimage}">Editar imagen</a></li>
+                </ul>
+            </li>
+            <li sec:authorize="hasRole('ADMIN')" id= "games-menu" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.usermanagement}">
+                    Gestión de Juegos <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li sec:authorize="hasRole('ADMIN')"><a href="/user/add"  th:text="#{nav.addgame}">Agregar Usuario</a></li>
+
+                </ul>
+            </li>
+            <li sec:authorize="hasRole('INSTITUCION')" id= "games-menu2" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.usermanagement}">
+                    Gestión de Juegos <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.selectgame}">Seleccionar juegos</a></li>
+
                 </ul>
             </li>
         </ul>
@@ -37,16 +95,22 @@
                     </li>
                 </ul>
             </li>
-            <li>
+            <li sec:authorize="!isAuthenticated()">
                 <a href="/singup" th:text="#{signup.message}">
                     <span class="glyphicon glyphicon-user"></span>
                     Registrate
                 </a>
             </li>
-            <li>
+            <li sec:authorize="!isAuthenticated()">
                 <a href="/login" th:text="#{login.message}">
                     <span class="glyphicon glyphicon-log-in"></span>
                     Identifícate
+                </a>
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <a href="/logout" th:text="#{logout.logout}">
+                    <span class="glyphicon glyphicon-log-out"></span>
+                    Desconectar
                 </a>
             </li>
         </ul>
