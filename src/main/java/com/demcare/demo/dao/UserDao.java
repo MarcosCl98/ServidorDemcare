@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface UserDao extends CrudRepository<User, Long>, JpaSpecificationExecutor<User> {
 
     User findByMail(String mail);
-    void deleteByMail(String mail);
+
+    void deleteById(Long id);
+
 
 }

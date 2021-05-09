@@ -33,4 +33,7 @@ public class User implements Serializable {
     @Getter@Setter
     private String role;
 
+    @Getter@Setter
+    private boolean suspend;
+
 }

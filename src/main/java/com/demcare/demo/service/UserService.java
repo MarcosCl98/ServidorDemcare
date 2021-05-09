@@ -6,8 +6,10 @@ import java.util.List;
 
 public interface UserService {
     User findByMail(String mail);
-    void deleteByMail(String mail);
+    void deleteUser(Long id);
+    void suspendUser(Long id);
+    void activateUser(Long id);
     User register(User userEntity);
-    User update(User userEntity);
     List<User> getUsers();
+    List<User> getUsersList();
 }

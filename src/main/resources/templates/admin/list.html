@@ -9,8 +9,8 @@
 
 
 <div class="container">
-  <h2>Usuarios</h2>
-  <p>Usuarios registrados en el sistema :</p>
+  <h2 th:text="#{users}">Usuarios</h2>
+  <p th:text="#{user.list}">Usuarios registrados en el sistema:</p>
     <button type="button" id="updateButton" class="btn btn-default">Actualizar</button>
     <script>
         $( "#updateButton" ).click(function() {
@@ -22,11 +22,11 @@
   <table class="table table-hover">
     <thead>
       <tr>
-        <th class="col-md-1">id</th>
-        <th >Nombre</th>
-        <th >Apellidos</th>
-          <th >Email</th>
-          <th >Role</th>
+        <th th:text="#{user.name}">Nombre</th>
+        <th th:text="#{user.surname}">Apellidos</th>
+          <th th:text="#{user.mail}">Email</th>
+          <th th:text="#{user.role}">Role</th>
+          <th th:text="#{user.suspend}">Estado</th>
 		<th class="col-md-1"> </th>
 		<th class="col-md-1"> </th>
 		<th class="col-md-1"> </th>
@@ -34,13 +34,17 @@
     </thead>
 	<tbody>
 	  <tr th:each="user : ${userList}">
-	    <td th:text="${user.id}"> </td>
 	    <td th:text="${user.name}"></td>
 	    <td th:text="${user.surname}"></td>
           <td th:text="${user.mail}"></td>
           <td th:text="${user.role}"></td>
-	    <td><a th:href="${'/user/suspend/' + user.id}">suspender</a></td>
-	    <td><a th:href="${'/user/delete/' + user.id}">eliminar</a></td>
+          <td th:if="${user.suspend}" th:text="#{user.stateSuspend}">Suspendida</td>
+          <td th:if="${!user.suspend}" th:text="#{user.stateActive}">Activa</td>
+          <td>
+              <a th:if="${!user.suspend}" th:href="${'/admin/suspend/' + user.id}" th:text="#{user.suspendText}">suspender</a>
+              <a th:unless="${!user.suspend}" th:href="${'/admin/activate/' + user.id}"th:text="#{user.activateText}">activar</a>
+          </td>
+	    <td><a th:href="${'/admin/delete/' + user.id}" th:text="#{user.delete}">eliminar</a></td>
 	  </tr>
 	</tbody>
   </table>
