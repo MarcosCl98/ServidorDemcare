@@ -1,12 +1,14 @@
 package com.demcare.demo.service.impl;
 
 import com.demcare.demo.config.PasswordEncoderBean;
+import com.demcare.demo.dao.AsociatedUserDao;
 import com.demcare.demo.dao.UserDao;
+import com.demcare.demo.entities.AsociatedUser;
 import com.demcare.demo.entities.User;
 import com.demcare.demo.service.UserService;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -20,7 +22,8 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Autowired
-    private HttpSession httpSession;
+    private AsociatedUserDao asociatedUserDao;
+
 
     @Autowired
     private PasswordEncoderBean passwordEncoderBean;
@@ -64,6 +67,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void asociateUser(Long idInstitution, Long id) {
+        AsociatedUser asociacion = new AsociatedUser();
+        asociacion.setUser( userDao.findById(id).get());
+        asociacion.setUserInstitution( userDao.findById(idInstitution).get());
+        asociatedUserDao.save(asociacion);
+    }
+
+    @Override
     public List<User> getUsers() {
         Iterable<User> iterable = userDao.findAll();
         List <User> list = new ArrayList<User>();
@@ -84,4 +95,48 @@ public class UserServiceImpl implements UserService {
         }
         return list;
     }
+
+    @Override
+    public List<User> getPosibleAsociatedUsers() {
+        Iterable<User> iterable = userDao.findAll();
+        List <User> list = new ArrayList<User>();
+        for (User item : iterable) {
+            if(!item.getRole().equals("ROLE_ADMIN") && !item.getRole().equals("ROLE_INSTITUCION")){
+                list.add( item);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getAsociatedUsers() {
+        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+        List <User> list = new ArrayList<User>();
+        for (AsociatedUser item : iterable) {
+            list.add(item.getUser());
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getNotAsociatedUsers() {
+        Iterable<User>  userList = getPosibleAsociatedUsers();
+        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+        List <User> list = new ArrayList<User>();
+
+        for (User item : userList) {
+            boolean asociado = false;
+            for (AsociatedUser it : iterable) {
+                if(it.getUser().getId() == item.getId()){
+                    asociado = true;
+                }
+            }
+            if(!asociado){
+                list.add(item);
+            }
+        }
+        return list;
+    }
+
+
 }

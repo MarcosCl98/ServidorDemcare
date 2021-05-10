@@ -7,12 +7,12 @@ import com.demcare.demo.validators.SingUpFormValidator;
 import com.demcare.demo.service.SecurityService;
 import com.demcare.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -96,16 +96,16 @@ public class UserController extends DemcareController {
         return "redirect:home";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(@Validated User user, BindingResult result, Model
             model) {
 
-        /*loginFormValidator.validate(user, result);
+        *//*loginFormValidator.validate(user, result);
         if (result.hasErrors()) {
             return "login";
-        }*/
+        }*//*
         return "redirect:home";
-    }
+    }*/
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model) {
@@ -116,6 +116,11 @@ public class UserController extends DemcareController {
 
     @RequestMapping(value = { "/home" }, method = RequestMethod.GET)
     public String home(Model model) {
+    /*    SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        List<User> users = userService.getNotAsociatedUsers();*/
         return "home";
     }
 
@@ -141,6 +146,22 @@ public class UserController extends DemcareController {
     public String activateUser(@PathVariable Long id){
         userService.activateUser(id);
         return "redirect:/admin/list";
+    }
+
+    @RequestMapping("/institution/listUsers")
+    public String getInstitutionList(Model model){
+        model.addAttribute("userList", userService.getNotAsociatedUsers());
+        return "/institution/listUsers";
+    }
+
+    @RequestMapping("/institution/asociate/{id}" )
+    public String asociateUser(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        userService.asociateUser(user.getId(),id);
+        return "redirect:/institution/listUsers";
     }
 
 }

@@ -20,7 +20,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.invitations}">Invitar usuarios</a></li>
-                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/list" th:text="#{nav.include}">Incluir usuarios</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listUsers" th:text="#{nav.include}">Incluir usuarios</a></li>
                     <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
                 </ul>
             </li>
