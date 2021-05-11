@@ -39,7 +39,7 @@
                     Profile<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.editimage}">Editar imagen</a></li>
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/addphoto"  th:text="#{nav.editimage}">Editar imagen</a></li>
                     <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.solicitude}">Solicitar adscripción </a></li>
                 </ul>
             </li>

@@ -36,4 +36,14 @@ public class User implements Serializable {
     @Getter@Setter
     private boolean suspend;
 
+    @Getter@Setter
+    private String photos;
+
+    @Transient
+    public String getPhotosImagePath() {
+        if (photos == null || id == null) return null;
+
+        return "src/main/resources/img/user-photos/" + id + "/" + photos;
+    }
+
 }

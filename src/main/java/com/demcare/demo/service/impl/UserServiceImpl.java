@@ -6,11 +6,14 @@ import com.demcare.demo.dao.UserDao;
 import com.demcare.demo.entities.AsociatedUser;
 import com.demcare.demo.entities.User;
 import com.demcare.demo.service.UserService;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -138,5 +141,18 @@ public class UserServiceImpl implements UserService {
         return list;
     }
 
+    @Override
+    public User save(User user) {
+        return userDao.save(user);
+    }
+
+    @Override
+    public void saveImage(MultipartFile imageFile) throws IOException {
+        String folder = "/photos";
+        byte[] bytes = imageFile.getBytes();
+        Path path = Paths.get(folder + imageFile.getOriginalFilename());
+        Files.write(path,bytes);
+
+    }
 
 }

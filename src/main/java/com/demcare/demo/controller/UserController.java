@@ -13,17 +13,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Controller
 public class UserController extends DemcareController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private StorageService fileService;
 
     @Autowired
     private UserDetailsService uderDetailsService;
@@ -162,6 +168,36 @@ public class UserController extends DemcareController {
         User user = userService.findByMail(username);
         userService.asociateUser(user.getId(),id);
         return "redirect:/institution/listUsers";
+    }
+
+    @RequestMapping(value = "/cuidador/addphoto", method = RequestMethod.GET)
+    public String addphoto(Model model) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("user",user);
+        String s = user.getPhotosImagePath();
+        return "/cuidador/addphoto";
+    }
+
+    @RequestMapping(value = "/cuidador/addphoto", method = RequestMethod.POST)
+    public String saveUser(@RequestParam("image") MultipartFile multipartFile) throws IOException {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        user.setPhotos(fileName);
+
+        User savedUser = userService.save(user);
+
+        String uploadDir = "src/main/resources/img/user-photos/" + savedUser.getId();
+
+        FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+
+        return "home";
     }
 
 }
