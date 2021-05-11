@@ -43,7 +43,7 @@ public class User implements Serializable {
     public String getPhotosImagePath() {
         if (photos == null || id == null) return null;
 
-        return "src/main/resources/img/user-photos/" + id + "/" + photos;
+        return "/img/" + mail+ "/" + photos;
     }
 
 }

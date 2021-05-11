@@ -146,13 +146,6 @@ public class UserServiceImpl implements UserService {
         return userDao.save(user);
     }
 
-    @Override
-    public void saveImage(MultipartFile imageFile) throws IOException {
-        String folder = "/photos";
-        byte[] bytes = imageFile.getBytes();
-        Path path = Paths.get(folder + imageFile.getOriginalFilename());
-        Files.write(path,bytes);
 
-    }
 
 }

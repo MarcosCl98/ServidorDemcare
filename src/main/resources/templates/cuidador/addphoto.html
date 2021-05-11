@@ -19,7 +19,7 @@
 
 <form method="post" action="/cuidador/addphoto" th:object="${user}"
       enctype="multipart/form-data">
-    <img th:src="@{/img/1.png}" />
+    <img th:src="@{${user.photosImagePath}}" />
 
     <div>
         <label>Photos: </label>

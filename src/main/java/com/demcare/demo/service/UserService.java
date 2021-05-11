@@ -21,5 +21,4 @@ public interface UserService {
 
     User save(User user);
 
-    void saveImage(MultipartFile imageFile) throws IOException;
 }

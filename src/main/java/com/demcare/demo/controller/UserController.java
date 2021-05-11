@@ -29,9 +29,6 @@ public class UserController extends DemcareController {
     private UserService userService;
 
     @Autowired
-    private StorageService fileService;
-
-    @Autowired
     private UserDetailsService uderDetailsService;
 
     @Autowired
@@ -189,11 +186,11 @@ public class UserController extends DemcareController {
         User user = userService.findByMail(username);
 
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        user.setPhotos(fileName);
+        user.setPhotos("image.png");
 
         User savedUser = userService.save(user);
 
-        String uploadDir = "src/main/resources/img/user-photos/" + savedUser.getId();
+        String uploadDir = "src/main/resources/static/img/" + savedUser.getMail();
 
         FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 
