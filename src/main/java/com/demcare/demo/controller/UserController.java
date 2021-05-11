@@ -194,7 +194,7 @@ public class UserController extends DemcareController {
 
         FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 
-        return "home";
+        return "redirect:/cuidador/addphoto";
     }
 
 }

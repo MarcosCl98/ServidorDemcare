@@ -6,31 +6,60 @@
 <!-- Barra de Navegación superior -->
 <head th:replace="fragments/nav"/>
 
-<h4>Upload Single File:</h4>
+<div class="container">
+    <h2 th:text="#{nav.profile}">Perfil</h2>
+    <p th:text="#{nav.profile}">Información de tu perfil:</p>
+    <div class="table-responsive">
+        <table class="table table-hover" th:fragment="tableUsers" id="tableUsers">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th th:text="#{user.name}">Nombre</th>
+                    <th th:text="#{user.surname}">Apellidos</th>
+                    <th th:text="#{user.mail}">Email</th>
+                    <th th:text="#{user.role}">Role</th>
+                    <th th:text="#{user.suspend}">Estado</th>
+                    <th th:text="#{user.photo}">Foto</th>
+                    <th class="col-md-1"> </th>
+                    <th class="col-md-1"> </th>
+                    <th class="col-md-1"> </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.surname}"></td>
+                    <td th:text="${user.mail}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td th:if="${user.suspend}" th:text="#{user.stateSuspend}">Suspendida</td>
+                    <td th:if="${!user.suspend}" th:text="#{user.stateActive}">Activa</td>
+                    <td th:if="${user.photosImagePath != null}" > <img th:src="@{${user.photosImagePath}}" style="width:200px; height:200px;"/></td>
+                    <td th:if="${user.photosImagePath == null}" th:text="#{user.without.photo}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </table>
+        <form method="post" action="/cuidador/addphoto" th:object="${user}"
+              enctype="multipart/form-data">
+            <div>
+                <label th:text="#{upload.text}" >Subir foto de perfil:</label>
+                <input type="file" id="fileInput"  name="image" accept="image/png, image/jpeg" />
+                <p></p>
+                <button type="submit" disabled="disabled" class="btn btn-primary" th:text="#{button.upload}">Subir</button>
+                <script>
+                    $("#fileInput").change(function(){
+                        $("button").prop("disabled", this.files.length == 0);
+                    });
+                </script>
 
-<!--<form method="post" enctype="multipart/form-data" action="/cuidador/addphoto">
-    <input type="file" name="imageFile">
-    <input type="submit" value="Upload">
-</form>-->
-<!--<form method="post" action="/cuidador/addphoto" enctype="multipart/form-data">
-    <input type="file" name="file"/> <br/><br/>
-    <button type="submit">Submit</button>
-</form>-->
+            </div>
 
-<form method="post" action="/cuidador/addphoto" th:object="${user}"
-      enctype="multipart/form-data">
-    <img th:src="@{${user.photosImagePath}}" />
-
-    <div>
-        <label>Photos: </label>
-        <input type="file" name="image" accept="image/png, image/jpeg" />
+        </form>
     </div>
-    <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-primary">Subir</button>
-        </div>
-    </div>
-</form>
+</div>
+
+
+
 
 <footer th:replace="fragments/footer"/>
 </body>
