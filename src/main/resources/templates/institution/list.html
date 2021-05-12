@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head"/>
+<body>
+
+<!-- Barra de Navegación superior -->
+<head th:replace="fragments/nav"/>
+
+
+<div class="container">
+  <h2 th:text="#{users}">Usuarios</h2>
+  <p th:text="#{user.list.asociates}">Usuarios asociados a tu institución:</p>
+    <div class="table-responsive">
+      <table class="table table-hover" th:fragment="tableUsers" id="tableUsers">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th th:text="#{user.name}">Nombre</th>
+        <th th:text="#{user.surname}">Apellidos</th>
+          <th th:text="#{user.mail}">Email</th>
+      </tr>
+    </thead>
+	<tbody>
+	  <tr th:each="user : ${userList}">
+	    <td th:text="${user.name}"></td>
+	    <td th:text="${user.surname}"></td>
+          <td th:text="${user.mail}"></td>
+	  </tr>
+	</tbody>
+  </table>
+      </table>
+  </div>
+</div>
+
+<footer th:replace="fragments/footer"/>
+</body>
+</html>

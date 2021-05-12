@@ -29,7 +29,7 @@ public class UserController extends DemcareController {
     private UserService userService;
 
     @Autowired
-    private UserDetailsService uderDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private RolesService rolesService;
@@ -151,13 +151,18 @@ public class UserController extends DemcareController {
         return "redirect:/admin/list";
     }
 
-    @RequestMapping("/institution/listUsers")
+  /*  @RequestMapping("/institution/listUsers")
     public String getInstitutionList(Model model){
-        model.addAttribute("userList", userService.getNotAsociatedUsers());
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("userList", userService.getNotAsociatedUsers(user.getId()));
+        model.addAttribute("invitatedUsers", userService.getInvitatedUsers(user.getId()));
         return "/institution/listUsers";
-    }
+    }*/
 
-    @RequestMapping("/institution/asociate/{id}" )
+      /*@RequestMapping("/institution/asociate/{id}" )
     public String asociateUser(@PathVariable Long id){
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
@@ -165,6 +170,48 @@ public class UserController extends DemcareController {
         User user = userService.findByMail(username);
         userService.asociateUser(user.getId(),id);
         return "redirect:/institution/listUsers";
+    }*/
+
+    @RequestMapping("/institution/list")
+    public String getInstitutionList(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("userList", userService.getAsociatedUsers(user.getId()));
+        return "/institution/list";
+    }
+
+    @RequestMapping("/institution/listUsersToInvite")
+    public String getInstitutionListToInvite(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("userList", userService.getNotInvitatedUsers(user.getId()));
+        model.addAttribute("invitatedUsers", userService.getInvitatedUsers(user.getId()));
+        return "/institution/listUsersToInvite";
+    }
+
+
+    @RequestMapping("/institution/invite/{id}" )
+    public String inviteUser(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        userService.invitateUser(user.getId(),id);
+        return "redirect:/institution/listUsersToInvite";
+    }
+
+    @RequestMapping("/cuidador/list")
+    public String getCuidadorList(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("cuidadorList", userService.getInstitutionsAsociated(user.getId()));
+        return "/cuidador/list";
     }
 
     @RequestMapping(value = "/cuidador/addphoto", method = RequestMethod.GET)
@@ -195,6 +242,26 @@ public class UserController extends DemcareController {
         FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 
         return "redirect:/cuidador/addphoto";
+    }
+
+    @RequestMapping("/cuidador/listInvitations")
+    public String getInvitations(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("userList", userService.getInvitations(user.getId()));
+        return "/cuidador/listInvitations";
+    }
+
+    @RequestMapping("/cuidador/accept/{id}" )
+    public String acceptInvitation(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        userService.acceptInvitation(id,user.getId());
+        return "redirect:/cuidador/listInvitations";
     }
 
 }

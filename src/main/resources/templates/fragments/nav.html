@@ -19,8 +19,8 @@
                     Gestión de Usuarios <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.invitations}">Invitar usuarios</a></li>
-                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listUsers" th:text="#{nav.include}">Incluir usuarios</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listUsersToInvite"  th:text="#{nav.invitations}">Invitar usuarios</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/list" th:text="#{nav.usersinstitution}">Usuarios asociados</a></li>
                     <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
                 </ul>
             </li>
@@ -34,13 +34,23 @@
                 </ul>
             </li>
 
+            <li sec:authorize="hasRole('CUIDADOR')" id= "institution-menu" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.institutionmanagement}">
+                    Profile<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/list" th:text="#{nav.institutions.asociate}">Instituciones asociadas</a></li>
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/listInvitations"  th:text="#{nav.show.invitations}">Ver invitaciones </a></li>
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.solicitude}">Solicitar adscripción </a></li>
+                </ul>
+            </li>
+
             <li sec:authorize="hasRole('CUIDADOR')" id= "profile-menu" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.profile}">
                     Profile<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                     <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/addphoto"  th:text="#{nav.editimage}">Editar imagen</a></li>
-                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.solicitude}">Solicitar adscripción </a></li>
                 </ul>
             </li>
 
