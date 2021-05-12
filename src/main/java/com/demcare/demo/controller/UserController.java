@@ -2,7 +2,6 @@ package com.demcare.demo.controller;
 
 import com.demcare.demo.entities.User;
 import com.demcare.demo.service.RolesService;
-import com.demcare.demo.validators.LoginFormValidator;
 import com.demcare.demo.validators.SingUpFormValidator;
 import com.demcare.demo.service.SecurityService;
 import com.demcare.demo.service.UserService;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -19,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Controller
@@ -27,9 +24,6 @@ public class UserController extends DemcareController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Autowired
     private RolesService rolesService;
@@ -40,11 +34,6 @@ public class UserController extends DemcareController {
     @Autowired
     private SingUpFormValidator signUpFormValidator;
 
-    @Autowired
-    private LoginFormValidator loginFormValidator;
-
-    @Autowired
-    private HttpSession httpSession;
 
     @RequestMapping(value="/user/add", method=RequestMethod.POST )
     public String setUser(@Validated User user, BindingResult result, Model
@@ -119,11 +108,6 @@ public class UserController extends DemcareController {
 
     @RequestMapping(value = { "/home" }, method = RequestMethod.GET)
     public String home(Model model) {
-    /*    SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        String username = authentication.getName();
-        User user = userService.findByMail(username);
-        List<User> users = userService.getNotAsociatedUsers();*/
         return "home";
     }
 
@@ -178,7 +162,7 @@ public class UserController extends DemcareController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
-        model.addAttribute("userList", userService.getAsociatedUsers(user.getId()));
+        model.addAttribute("userList", userService.getUsersWithAsociation(user.getId()));
         return "/institution/list";
     }
 
@@ -188,8 +172,8 @@ public class UserController extends DemcareController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
-        model.addAttribute("userList", userService.getNotInvitatedUsers(user.getId()));
-        model.addAttribute("invitatedUsers", userService.getInvitatedUsers(user.getId()));
+        model.addAttribute("userList", userService.getUsersWithoutInvitation(user.getId()));
+        model.addAttribute("invitatedUsers", userService.getUsersWithInvitationAndRequest(user.getId()));
         return "/institution/listUsersToInvite";
     }
 
@@ -204,14 +188,45 @@ public class UserController extends DemcareController {
         return "redirect:/institution/listUsersToInvite";
     }
 
+    @RequestMapping("/institution/listSolicitudes" )
+    public String getSolicitudes(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("userList", userService.getSolicitudes(user.getId()));
+        return "/institution/listSolicitudes" ;
+    }
+
+    @RequestMapping("/institution/accept/{id}" )
+    public String acceptSolicitude(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        userService.acceptSolicitude(user.getId(),id);
+        return "redirect:/institution/listSolicitudes";
+    }
+
     @RequestMapping("/cuidador/list")
     public String getCuidadorList(Model model){
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
-        model.addAttribute("cuidadorList", userService.getInstitutionsAsociated(user.getId()));
+        model.addAttribute("cuidadorList", userService.getInstitutionsWithAsociation(user.getId()));
         return "/cuidador/list";
+    }
+
+    @RequestMapping("/cuidador/listInstitutions")
+    public String getInstitutions(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("userList", userService.getNotRequestInstitutions(user.getId()));
+        model.addAttribute("requestInstitutions", userService.getRequestInstitutions((user.getId())));
+        return "/cuidador/listInstitutions";
     }
 
     @RequestMapping(value = "/cuidador/addphoto", method = RequestMethod.GET)
@@ -262,6 +277,16 @@ public class UserController extends DemcareController {
         User user = userService.findByMail(username);
         userService.acceptInvitation(id,user.getId());
         return "redirect:/cuidador/listInvitations";
+    }
+
+    @RequestMapping("/cuidador/solicitude/{id}" )
+    public String sentSolicitude(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        userService.sentSolicitude(user.getId(),id);
+        return "redirect:/cuidador/listInstitutions";
     }
 
 }

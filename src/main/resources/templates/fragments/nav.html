@@ -20,6 +20,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listUsersToInvite"  th:text="#{nav.invitations}">Invitar usuarios</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listSolicitudes" th:text="#{nav.insitution.solicitudes}">Ver solicitudes</a></li>
                     <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/list" th:text="#{nav.usersinstitution}">Usuarios asociados</a></li>
                     <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
                 </ul>
@@ -41,7 +42,7 @@
                 <ul class="dropdown-menu">
                     <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/list" th:text="#{nav.institutions.asociate}">Instituciones asociadas</a></li>
                     <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/listInvitations"  th:text="#{nav.show.invitations}">Ver invitaciones </a></li>
-                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.solicitude}">Solicitar adscripción </a></li>
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/listInstitutions"  th:text="#{nav.solicitude}">Solicitar adscripción </a></li>
                 </ul>
             </li>
 

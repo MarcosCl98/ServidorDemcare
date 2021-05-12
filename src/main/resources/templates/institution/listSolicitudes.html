@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head"/>
+<body>
+
+<!-- Barra de Navegación superior -->
+<head th:replace="fragments/nav"/>
+
+
+
+<div class="container">
+  <h2 th:text="#{users}">Usuarios</h2>
+  <p th:text="#{users.solicitudes }">Invitaciones recibidas de instituciones:</p>
+    <div class="table-responsive">
+      <table class="table table-hover" th:fragment="tableUsers" id="tableUsers">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th th:text="#{user.name}">Nombre</th>
+        <th th:text="#{user.surname}">Apellidos</th>
+          <th th:text="#{user.mail}">Email</th>
+		<th class="col-md-1"> </th>
+		<th class="col-md-1"> </th>
+		<th class="col-md-1"> </th>
+      </tr>
+    </thead>
+	<tbody>
+        <tr th:each="userInvitated : ${userList}">
+            <td th:text="${userInvitated.name}"></td>
+            <td th:text="${userInvitated.surname}"></td>
+            <td th:text="${userInvitated.mail}"></td>
+            <td>
+                <a th:href="${'/institution/accept/' + userInvitated.id}" >aceptar</a>
+            </td>
+      </tr>
+	</tbody>
+  </table>
+      </table>
+  </div>
+</div>
+
+<footer th:replace="fragments/footer"/>
+</body>
+</html>
