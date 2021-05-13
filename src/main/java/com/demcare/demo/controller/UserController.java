@@ -319,4 +319,24 @@ public class UserController extends DemcareController {
         return "redirect:/jugador/addphoto";
     }
 
+    @RequestMapping("/jugador/listInvitations")
+    public String getInvitationsJugador(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("userList", userService.getInvitations(user.getId()));
+        return "/jugador/listInvitations";
+    }
+
+    @RequestMapping("/jugador/accept/{id}" )
+    public String acceptInvitationJugador(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        userService.acceptInvitation(id,user.getId());
+        return "redirect:/jugador/listInvitations";
+    }
+
 }

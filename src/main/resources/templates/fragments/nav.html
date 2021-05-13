@@ -61,6 +61,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li sec:authorize="hasRole('JUGADOR')"><a href="/jugador/addphoto"  th:text="#{nav.editimage}">Editar imagen</a></li>
+                    <li sec:authorize="hasRole('JUGADOR')"><a href="/jugador/listInvitations"  th:text="#{nav.show.invitations}">Ver invitaciones </a></li>
                 </ul>
             </li>
             <li sec:authorize="hasRole('ADMIN')" id= "games-menu" class="dropdown">
