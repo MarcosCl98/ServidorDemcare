@@ -17,8 +17,6 @@
                     <th th:text="#{user.name}">Nombre</th>
                     <th th:text="#{user.surname}">Apellidos</th>
                     <th th:text="#{user.mail}">Email</th>
-                    <th th:text="#{user.role}">Role</th>
-                    <th th:text="#{user.suspend}">Estado</th>
                     <th th:text="#{user.photo}">Foto</th>
                     <th class="col-md-1"> </th>
                     <th class="col-md-1"> </th>
@@ -30,16 +28,13 @@
                     <td th:text="${user.name}"></td>
                     <td th:text="${user.surname}"></td>
                     <td th:text="${user.mail}"></td>
-                    <td th:text="${user.role}"></td>
-                    <td th:if="${user.suspend}" th:text="#{user.stateSuspend}">Suspendida</td>
-                    <td th:if="${!user.suspend}" th:text="#{user.stateActive}">Activa</td>
                     <td th:if="${user.photosImagePath != null}" > <img th:src="@{${user.photosImagePath}}" style="width:200px; height:200px;"/></td>
                     <td th:if="${user.photosImagePath == null}" th:text="#{user.without.photo}"></td>
                 </tr>
                 </tbody>
             </table>
         </table>
-        <form method="post" action="/cuidador/addphoto" th:object="${user}"
+        <form method="post" action="/jugador/addphoto" th:object="${user}"
               enctype="multipart/form-data">
             <div>
                 <label th:text="#{upload.text}" >Subir foto de perfil:</label>

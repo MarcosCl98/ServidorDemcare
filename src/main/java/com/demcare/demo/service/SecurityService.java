@@ -30,7 +30,7 @@ public class SecurityService {
         return null;
     }
 
-    public void autoLogin(String dni, String password) {
+    public UsernamePasswordAuthenticationToken autoLogin(String dni, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(dni);
 
         UsernamePasswordAuthenticationToken aToken = new UsernamePasswordAuthenticationToken(
@@ -40,5 +40,7 @@ public class SecurityService {
             SecurityContextHolder.getContext().setAuthentication(aToken);
             logger.debug(String.format("Auto login %s successfully!", dni));
         }
+
+        return aToken;
     }
 }

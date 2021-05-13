@@ -289,4 +289,34 @@ public class UserController extends DemcareController {
         return "redirect:/cuidador/listInstitutions";
     }
 
+    @RequestMapping(value = "/jugador/addphoto", method = RequestMethod.GET)
+    public String addphotoJugador(Model model) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("user",user);
+        String s = user.getPhotosImagePath();
+        return "/jugador/addphoto";
+    }
+
+    @RequestMapping(value = "/jugador/addphoto", method = RequestMethod.POST)
+    public String saveUserJugador(@RequestParam("image") MultipartFile multipartFile) throws IOException {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        user.setPhotos("image.png");
+
+        User savedUser = userService.save(user);
+
+        String uploadDir = "src/main/resources/static/img/" + savedUser.getMail();
+
+        FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+
+        return "redirect:/jugador/addphoto";
+    }
+
 }

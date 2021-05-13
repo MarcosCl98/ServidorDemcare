@@ -60,7 +60,7 @@
                     Profile<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('JUGADOR')"><a href="/user/add"  th:text="#{nav.editimage}">Editar imagen</a></li>
+                    <li sec:authorize="hasRole('JUGADOR')"><a href="/jugador/addphoto"  th:text="#{nav.editimage}">Editar imagen</a></li>
                 </ul>
             </li>
             <li sec:authorize="hasRole('ADMIN')" id= "games-menu" class="dropdown">

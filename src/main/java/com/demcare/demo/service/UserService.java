@@ -8,7 +8,6 @@ public interface UserService {
     void deleteUser(Long id);
     void suspendUser(Long id);
     void activateUser(Long id);
-    void asociateUser(Long idInstitution, Long id);
     void invitateUser(Long idInstitution, Long id);
     void sentSolicitude(Long idInstitution, Long id);
     void acceptInvitation(Long idInstitution, Long id);
@@ -24,9 +23,6 @@ public interface UserService {
     List<User> getUsersWithInvitationAndRequest(Long idInstitution);
     List<User> getUsersWithoutAsociation(Long idInstitution);
     List<User> getUsersWithoutInvitation(Long idInstitution);
-    List<User> getUsersWithoutRequest(Long idInstitution);
-    List<User> getInstitutionsWithoutInvitation(Long idUser);
-    List<User> getInstitutionsWithoutSolicitude(List<User> listInstitutions);
     List<User> getRequestInstitutions(Long idUser);
     List<User> getNotRequestInstitutions(Long idUser);
     User save(User user);
