@@ -1,11 +1,16 @@
 package com.demcare.demo.controller;
 
+import com.demcare.demo.entities.Token;
 import com.demcare.demo.entities.User;
 import com.demcare.demo.service.RolesService;
+import com.demcare.demo.service.TokenService;
+import com.demcare.demo.util.FileUploadUtil;
+import com.demcare.demo.util.SecureTokenGenerator;
 import com.demcare.demo.validators.SingUpFormValidator;
 import com.demcare.demo.service.SecurityService;
 import com.demcare.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,12 +23,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 
 @Controller
 public class UserController extends DemcareController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Autowired
     private RolesService rolesService;
@@ -33,26 +42,6 @@ public class UserController extends DemcareController {
 
     @Autowired
     private SingUpFormValidator signUpFormValidator;
-
-
-    @RequestMapping(value="/user/add", method=RequestMethod.POST )
-    public String setUser(@Validated User user, BindingResult result, Model
-            model) {
-        signUpFormValidator.validate(user, result);
-        if (result.hasErrors()) {
-            return "singup";
-        }
-        model.addAttribute("rolesList", rolesService.getRoles());
-        userService.register(user);
-        return "redirect:/home";
-    }
-
-    @RequestMapping(value="/user/add")
-    public String getUser(Model model){
-        model.addAttribute("rolesList", rolesService.getRoles());
-        model.addAttribute("user", new User());
-        return "user/add";
-    }
 
 
 
@@ -84,7 +73,7 @@ public class UserController extends DemcareController {
             return "singup";
         }
         userService.register(user);
-        securityService.autoLogin(user.getMail(), user.getPasswordConfirm());
+        UsernamePasswordAuthenticationToken a = securityService.autoLogin(user.getMail(), user.getPasswordConfirm());
         return "redirect:home";
     }
 
@@ -289,6 +278,34 @@ public class UserController extends DemcareController {
         return "redirect:/cuidador/listInstitutions";
     }
 
+    @RequestMapping(value="/cuidador/add")
+    public String getUser(Model model){
+        model.addAttribute("rolesList", rolesService.getRoleJugador());
+        model.addAttribute("user", new User());
+        return "/cuidador/add";
+    }
+
+    @RequestMapping(value="/cuidador/add", method=RequestMethod.POST )
+    public String setUser(@Validated User user, BindingResult result, Model
+            model) {
+        signUpFormValidator.validate(user, result);
+        if (result.hasErrors()) {
+            return "singup";
+        }
+        model.addAttribute("rolesList", rolesService.getRoles());
+        userService.register(user);
+
+        Token token = new Token();
+        token.setUser(user);
+        String tokenPrueba = SecureTokenGenerator.nextToken();
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String tokenCode = tokenPrueba + timestamp.getTime();
+        token.setCode(tokenCode);
+        tokenService.save(token);
+        return "redirect:/home";
+    }
+
     @RequestMapping(value = "/jugador/addphoto", method = RequestMethod.GET)
     public String addphotoJugador(Model model) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -337,6 +354,12 @@ public class UserController extends DemcareController {
         User user = userService.findByMail(username);
         userService.acceptInvitation(id,user.getId());
         return "redirect:/jugador/listInvitations";
+    }
+
+    @RequestMapping("/token/{code}")
+    public String loginToken(@PathVariable String code){
+        securityService.logByToken(code);
+        return "redirect:/home";
     }
 
 }

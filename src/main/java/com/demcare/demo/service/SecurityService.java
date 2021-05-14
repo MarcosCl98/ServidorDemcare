@@ -1,5 +1,6 @@
 package com.demcare.demo.service;
 
+import com.demcare.demo.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+
 
 @Service
 public class SecurityService {
@@ -19,6 +22,12 @@ public class SecurityService {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TokenService tokenService;
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
 
@@ -40,7 +49,19 @@ public class SecurityService {
             SecurityContextHolder.getContext().setAuthentication(aToken);
             logger.debug(String.format("Auto login %s successfully!", dni));
         }
-
         return aToken;
+    }
+
+    public void logByToken(String tokenCode){
+        User user = tokenService.findByCode(tokenCode).getUser();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getMail());
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                userDetails, user.getPassword(), userDetails.getAuthorities());
+        if (token.isAuthenticated()) {
+            SecurityContextHolder.getContext().setAuthentication(token);
+        }else{
+            authenticationManager.authenticate(token);
+        }
     }
 }

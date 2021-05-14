@@ -1,8 +1,11 @@
 package com.demcare.demo.service;
 
 import com.demcare.demo.entities.User;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 public interface UserService {
     User findByMail(String mail);
     void deleteUser(Long id);

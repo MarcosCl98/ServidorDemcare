@@ -1,4 +1,4 @@
-package com.demcare.demo.controller;
+package com.demcare.demo.util;
 
 import org.springframework.web.multipart.MultipartFile;
 

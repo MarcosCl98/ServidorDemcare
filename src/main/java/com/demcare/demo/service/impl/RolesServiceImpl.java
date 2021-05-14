@@ -7,9 +7,14 @@ import org.springframework.stereotype.Service;
 public class RolesServiceImpl implements RolesService {
 
     String[] roles = {"ROLE_ADMIN","ROLE_CUIDADOR","ROLE_INSTITUCION","ROLE_JUGADOR"};
-
+    String[] roles2 = {"ROLE_JUGADOR"};
     @Override
     public String[] getRoles() {
         return roles;
+    }
+
+    @Override
+    public String[] getRoleJugador() {
+        return roles2;
     }
 }
