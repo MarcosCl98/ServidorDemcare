@@ -1,14 +1,12 @@
 package com.demcare.demo.controller;
 
+import com.demcare.demo.entities.AssociationCarerPlayer;
 import com.demcare.demo.entities.Token;
 import com.demcare.demo.entities.User;
-import com.demcare.demo.service.RolesService;
-import com.demcare.demo.service.TokenService;
+import com.demcare.demo.service.*;
 import com.demcare.demo.util.FileUploadUtil;
 import com.demcare.demo.util.SecureTokenGenerator;
 import com.demcare.demo.validators.SingUpFormValidator;
-import com.demcare.demo.service.SecurityService;
-import com.demcare.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,14 +20,19 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Controller
 public class UserController extends DemcareController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AssociationCarerPlayerService associationCarerPlayerService;
 
     @Autowired
     private TokenService tokenService;
@@ -124,27 +127,6 @@ public class UserController extends DemcareController {
         return "redirect:/admin/list";
     }
 
-  /*  @RequestMapping("/institution/listUsers")
-    public String getInstitutionList(Model model){
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        String username = authentication.getName();
-        User user = userService.findByMail(username);
-        model.addAttribute("userList", userService.getNotAsociatedUsers(user.getId()));
-        model.addAttribute("invitatedUsers", userService.getInvitatedUsers(user.getId()));
-        return "/institution/listUsers";
-    }*/
-
-      /*@RequestMapping("/institution/asociate/{id}" )
-    public String asociateUser(@PathVariable Long id){
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        String username = authentication.getName();
-        User user = userService.findByMail(username);
-        userService.asociateUser(user.getId(),id);
-        return "redirect:/institution/listUsers";
-    }*/
-
     @RequestMapping("/institution/list")
     public String getInstitutionList(Model model){
         SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -185,6 +167,45 @@ public class UserController extends DemcareController {
         User user = userService.findByMail(username);
         model.addAttribute("userList", userService.getSolicitudes(user.getId()));
         return "/institution/listSolicitudes" ;
+    }
+
+    @RequestMapping("/institution/listCuidadores")
+    public String getCuidadores(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("cuidadores", userService.getCuidadoresAsociados(user.getId()));
+        return "/institution/listCuidadores";
+    }
+
+    @RequestMapping("/institution/listJugadores/{id}" )
+    public String getJugadores(Model model,@PathVariable Long id, HttpServletRequest request){
+        User user = userService.findById(id);
+        request.getSession().setAttribute("cuidador",user);
+
+        return "redirect:/institution/listJugadores";
+    }
+
+    @RequestMapping("/institution/listJugadores" )
+    public String getJugadoresList(Model model, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("cuidador");
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User institution = userService.findByMail(username);
+        List<User> jugadoresNoAsociados = userService.getJugadoresNoAsociados(user);
+        List<User> jugadoresNoAsociadosAsociados = userService.getJugadoresNoAsociadosAsociados(jugadoresNoAsociados,institution.getId());
+        model.addAttribute("jugadoresNoAsociados", jugadoresNoAsociadosAsociados);
+        return "/institution/listJugadores";
+    }
+
+    @RequestMapping("/institution/asociate/{id}" )
+    public String asociateUser(@PathVariable Long id, HttpServletRequest request){
+        User carer = (User) request.getSession().getAttribute("cuidador");
+        User player = userService.findById(id);
+        userService.asociateCarerPlayer(carer.getId(),player.getId());
+        return "redirect:/institution/listJugadores";
     }
 
     @RequestMapping("/institution/accept/{id}" )
@@ -298,11 +319,19 @@ public class UserController extends DemcareController {
         Token token = new Token();
         token.setUser(user);
         String tokenPrueba = SecureTokenGenerator.nextToken();
-
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String tokenCode = tokenPrueba + timestamp.getTime();
         token.setCode(tokenCode);
         tokenService.save(token);
+
+        AssociationCarerPlayer asociation = new AssociationCarerPlayer();
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User carer = userService.findByMail(username);
+        asociation.setCarerUser(carer);
+        asociation.setPlayerUser(user);
+        associationCarerPlayerService.save(asociation);
         return "redirect:/home";
     }
 

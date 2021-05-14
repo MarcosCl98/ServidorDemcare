@@ -1,15 +1,11 @@
 package com.demcare.demo.service.impl;
 
 import com.demcare.demo.config.PasswordEncoderBean;
-import com.demcare.demo.dao.AsociatedUserDao;
-import com.demcare.demo.dao.InvitationsDao;
-import com.demcare.demo.dao.SolicitudesDao;
-import com.demcare.demo.dao.UserDao;
-import com.demcare.demo.entities.AsociatedUser;
-import com.demcare.demo.entities.InvitationsInstitutions;
-import com.demcare.demo.entities.SolicitudesInstitutions;
-import com.demcare.demo.entities.User;
+import com.demcare.demo.dao.*;
+import com.demcare.demo.entities.*;
+import com.demcare.demo.service.AssociationCarerPlayerService;
 import com.demcare.demo.service.UserService;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -26,6 +22,9 @@ public class UserServiceImpl implements UserService {
     private AsociatedUserDao asociatedUserDao;
 
     @Autowired
+    private AssociationCarerPlayerDao associationCarerPlayerDao;
+
+    @Autowired
     private InvitationsDao invitationsInstitutionsDao;
 
     @Autowired
@@ -37,6 +36,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByMail(String mail) {
         return userDao.findByMail(mail);
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userDao.findById(id).get();
     }
 
     @Override
@@ -128,6 +132,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void asociateCarerPlayer(Long idCarer, Long idPlayer) {
+        AssociationCarerPlayer association = new AssociationCarerPlayer();
+        association.setPlayerUser(userDao.findById(idPlayer).get());
+        association.setCarerUser(userDao.findById(idCarer).get());
+        associationCarerPlayerDao.save(association);
+    }
+
 
     @Override
     public List<User> getUsersList() {
@@ -135,6 +147,30 @@ public class UserServiceImpl implements UserService {
         List <User> list = new ArrayList<User>();
         for (User item : iterable) {
             if(!item.getRole().equals("ROLE_ADMIN")){
+                list.add( item);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getCuidadores() {
+        Iterable<User> iterable = userDao.findAll();
+        List <User> list = new ArrayList<User>();
+        for (User item : iterable) {
+            if(item.getRole().equals("ROLE_CUIDADOR")){
+                list.add( item);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getJugadores() {
+        Iterable<User> iterable = userDao.findAll();
+        List <User> list = new ArrayList<User>();
+        for (User item : iterable) {
+            if(item.getRole().equals("ROLE_JUGADOR")){
                 list.add( item);
             }
         }
@@ -185,7 +221,44 @@ public class UserServiceImpl implements UserService {
         return list;
     }
 
+    @Override
+    public List<User> getCuidadoresAsociados(Long idInstitution) {
+        Iterable<User>  userList = getCuidadores();
+        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+        List <User> list = new ArrayList<User>();
 
+        for (User item : userList) {
+            boolean asociado = false;
+            for (AsociatedUser it : iterable) {
+                if(it.getUser().getId() == item.getId() && idInstitution == it.getUserInstitution().getId()){
+                    asociado = true;
+                }
+            }
+            if(asociado){
+                list.add(item);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getJugadoresNoAsociadosAsociados(List<User> jugadoresNoAsociados, Long idInstitution) {
+        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+        List <User> list = new ArrayList<User>();
+
+        for (User jugadorNoAsociado : jugadoresNoAsociados) {
+            boolean asociado = false;
+            for (AsociatedUser asociacion : iterable) {
+                if(asociacion.getUserInstitution().getId() == idInstitution && asociacion.getUser().getId() == jugadorNoAsociado.getId()){
+                    asociado = true;
+                }
+            }
+            if(asociado){
+                list.add(jugadorNoAsociado);
+            }
+        }
+        return list;
+    }
 
     @Override
     public List<User> getInstitutionsWithAsociation(Long idUser) {
@@ -354,6 +427,33 @@ public class UserServiceImpl implements UserService {
             }
         }
 
+        return list2;
+    }
+
+    @Override
+    public List<User> getJugadoresNoAsociados(User user) {
+        Iterable<AssociationCarerPlayer> iterable = associationCarerPlayerDao.findAll();
+        List <User> list = new ArrayList<User>();
+        List <User> allJugadores = getJugadores();
+        List <User> list2 = new ArrayList<User>();
+        List <User> finalList = new ArrayList<User>();
+        for(AssociationCarerPlayer a: iterable){
+            if(a.getCarerUser().getId() == user.getId()){
+                list.add(a.getPlayerUser());
+            }
+        }
+
+        for(User jugador: allJugadores){
+            boolean asociado = false;
+            for(User jugadorAsociado: list){
+                if(jugador.getId() == jugadorAsociado.getId()){
+                    asociado = true;
+                }
+            }
+            if(!asociado){
+                list2.add(jugador);
+            }
+        }
         return list2;
     }
 

@@ -19,9 +19,10 @@
                     Gestión de Usuarios <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listUsersToInvite"  th:text="#{nav.invitations}">Invitar usuarios</a></li>
-                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listSolicitudes" th:text="#{nav.insitution.solicitudes}">Ver solicitudes</a></li>
                     <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/list" th:text="#{nav.usersinstitution}">Usuarios asociados</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listUsersToInvite"  th:text="#{nav.invitations}">Invitar usuarios</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listCuidadores"  th:text="#{nav.asociate}">Asociar usuarios</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listSolicitudes" th:text="#{nav.insitution.solicitudes}">Ver solicitudes</a></li>
                     <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
                 </ul>
             </li>
