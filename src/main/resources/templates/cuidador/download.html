@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head"/>
+<body>
+
+<!-- Barra de Navegación superior -->
+<head th:replace="fragments/nav"/>
+
+<div class="container">
+  <h2>Descarga el html asociado al paciente</h2>
+  <a download th:href="@{${path}}">
+    Descargar Archivo
+  </a>
+</div>
+<footer th:replace="fragments/footer"/>
+</body>
+</html>

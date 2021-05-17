@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -308,7 +311,7 @@ public class UserController extends DemcareController {
 
     @RequestMapping(value="/cuidador/add", method=RequestMethod.POST )
     public String setUser(@Validated User user, BindingResult result, Model
-            model) {
+            model, HttpServletRequest request) {
         signUpFormValidator.validate(user, result);
         if (result.hasErrors()) {
             return "singup";
@@ -332,7 +335,48 @@ public class UserController extends DemcareController {
         asociation.setCarerUser(carer);
         asociation.setPlayerUser(user);
         associationCarerPlayerService.save(asociation);
-        return "redirect:/home";
+
+        File folder = new File("src/main/resources/static/html/" );
+        File[] files = folder.listFiles();
+        if(files!=null) {
+            for(File f: files) {
+                f.delete();
+            }
+        }
+
+        String uploadDir = "src/main/resources/static/html/" + user.getName() + ".html";
+        File file = new File( uploadDir);
+        String data = "<!DOCTYPE html>\n" +
+                "<html lang=\"es\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "    <title>HTML</title>\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                "    <meta http-equiv=\"refresh\" content=\"0; url=http://localhost:8080/token/"+ tokenCode +"\" />\n" +
+                "    <link rel=\"stylesheet\" href=\"estilo.css\">\n" +
+                "</head>\n" +
+                "\n" +
+                "<body>\n" +
+                "</body>\n" +
+                "</html>";
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        writer.write(data);
+        writer.close();
+        String path = "../html/" + user.getName()+".html";
+        request.getSession().setAttribute("pathdownload",path);
+        return "redirect:/cuidador/download";
+    }
+
+    @RequestMapping(value="/cuidador/download")
+    public String download(Model model, HttpServletRequest request){
+        model.addAttribute("path", request.getSession().getAttribute("pathdownload"));
+        return "/cuidador/download";
     }
 
     @RequestMapping(value = "/jugador/addphoto", method = RequestMethod.GET)
