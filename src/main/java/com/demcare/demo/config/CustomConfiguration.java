@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 
-@Configuration
+
 public class CustomConfiguration implements WebMvcConfigurer {
 
     @Override

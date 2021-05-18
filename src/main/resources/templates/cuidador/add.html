@@ -13,19 +13,6 @@
         href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
   <link rel="stylesheet" href="/css/custom.css" />
   <script src="/script/languages.js"> </script>
-  <script type="text/javascript">
-
-    function copiarDatos(){
-
-      var path = "/html/juan.html"
-      var fs = require('fs');
-
-      var htmlContent = '<html>Whatever</html>';
-
-      fs.writeFile('/html/prueba.html', htmlContent, (error) => { /* handle error */ });
-
-    }
-  </script>
 </head>
 <body>
 
@@ -33,10 +20,10 @@
 <head th:replace="fragments/nav"/>
 
 <div class="container">
-  <h2>Agregar Usuario</h2>
+  <h2 th:text="#{nav.addusers}">Agregar Usuario</h2>
   <form class="form-horizontal" method="post" action="/cuidador/add" th:object="${user}">
     <div class="form-group">
-      <label class="control-label col-sm-2" for=”role”>Role:</label>
+      <label class="control-label col-sm-2" for=”role” th:text="#{user.role}">Role:</label>
       <div class="col-sm-10">
         <select id="role" class="form-control" name="role">
           <option th:each="role : ${rolesList}"
@@ -47,7 +34,7 @@
       </div>
     </div>
     <div class="form-group" >
-      <label class="control-label col-sm-2" for="mail">Email:</label>
+      <label class="control-label col-sm-2" for="mail" th:text="#{user.mail}">Email:</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" name="mail"
                placeholder="99999999Y" required="true" />
@@ -56,7 +43,7 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="name">Nombre:</label>
+      <label class="control-label col-sm-2" for="name" th:text="#{user.name}">Nombre:</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" name="name" id="name"
                placeholder="Ejemplo: Juan" required="true" />
@@ -65,7 +52,7 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="surname">Apellidos:</label>
+      <label class="control-label col-sm-2" for="surname" th:text="#{user.surname}">Apellidos:</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" name="surname"
                placeholder="Ejemplo: Peréz Almonte" required="true" />
@@ -74,7 +61,7 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="control-label col-sm-2" for="password">Password:</label>
+      <label class="control-label col-sm-2" for="password" th:text="#{user.password}">Contraseña:</label>
       <div class="col-sm-10">
         <input type="password" class="form-control" name="password"
                placeholder="Entre el Password" />
@@ -83,8 +70,8 @@
       </div>
     </div>
     <div class="form-group" >
-      <label class="control-label col-sm-2" for="passwordConfirm">Repita
-        el Password:</label>
+      <label class="control-label col-sm-2" for="passwordConfirm" th:text="#{user.confirmpassword}">Repita
+        la contraseña:</label>
       <div class="col-sm-10">
         <input type="password" class="form-control" name="passwordConfirm"
                placeholder="Repita el Password" />
@@ -94,7 +81,7 @@
     </div>
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary" >Enviar</button>
+        <button type="submit" class="btn btn-primary" th:text="#{button.sent}">Enviar</button>
       </div>
     </div>
   </form>

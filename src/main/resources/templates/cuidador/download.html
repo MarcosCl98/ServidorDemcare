@@ -7,9 +7,9 @@
 <head th:replace="fragments/nav"/>
 
 <div class="container">
-  <h2>Descarga el html asociado al paciente</h2>
-  <a download th:href="@{${path}}">
-    Descargar Archivo
+  <h2 th:text="#{download.html}">Descarga el html asociado al paciente</h2>
+  <a download th:href="@{${path}}" th:text="#{download}">
+    Descargar
   </a>
 </div>
 <footer th:replace="fragments/footer"/>
