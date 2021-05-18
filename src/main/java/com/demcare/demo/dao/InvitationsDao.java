@@ -1,7 +1,6 @@
 package com.demcare.demo.dao;
 
 
-import com.demcare.demo.entities.AsociatedUser;
 import com.demcare.demo.entities.InvitationsInstitutions;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;

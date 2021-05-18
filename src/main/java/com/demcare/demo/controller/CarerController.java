@@ -125,7 +125,7 @@ public class CarerController extends DemcareController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
-        userService.sentSolicitude(user.getId(),id);
+        userService.solicitudeInstitution(user.getId(),id);
         return "redirect:/cuidador/listInstitutions";
     }
 

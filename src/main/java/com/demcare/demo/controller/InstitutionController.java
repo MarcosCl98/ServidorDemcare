@@ -27,7 +27,7 @@ public class InstitutionController extends DemcareController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
-        model.addAttribute("userList", userService.getUsersWithAsociation(user.getId()));
+        model.addAttribute("userList", userService.getAssociateUsers(user.getId()));
         return "/institution/list";
     }
 
@@ -69,7 +69,7 @@ public class InstitutionController extends DemcareController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
-        model.addAttribute("cuidadores", userService.getCuidadoresAsociados(user.getId()));
+        model.addAttribute("cuidadores", userService.getAssociateCarers(user.getId()));
         return "/institution/listCuidadores";
     }
 
@@ -88,8 +88,8 @@ public class InstitutionController extends DemcareController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User institution = userService.findByMail(username);
-        List<User> jugadoresNoAsociados = userService.getJugadoresNoAsociados(user);
-        List<User> jugadoresNoAsociadosAsociados = userService.getJugadoresNoAsociadosAsociados(jugadoresNoAsociados,institution.getId());
+        List<User> jugadoresNoAsociados = userService.getNotAssociatedPlayers(user);
+        List<User> jugadoresNoAsociadosAsociados = userService.getNotAssociatedPlayersWithCarer(jugadoresNoAsociados,institution.getId());
         model.addAttribute("jugadoresNoAsociados", jugadoresNoAsociadosAsociados);
         return "/institution/listJugadores";
     }

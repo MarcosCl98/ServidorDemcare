@@ -6,9 +6,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="asociated_users")
+@Table(name="asociation_institution_user")
 @NoArgsConstructor @AllArgsConstructor @Builder @ToString
-public class AsociatedUser implements Serializable {
+public class AssociationInstitutionUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)

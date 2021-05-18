@@ -9,5 +9,4 @@ import java.util.List;
 @Service
 public interface AssociationCarerPlayerService {
     AssociationCarerPlayer save(AssociationCarerPlayer associationCarerPlayer);
-
 }

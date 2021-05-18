@@ -17,7 +17,7 @@ public class AdminController extends DemcareController {
 
     @RequestMapping("/admin/list")
     public String getList(Model model){
-        model.addAttribute("userList", userService.getUsersList() );
+        model.addAttribute("userList", userService.getAdminList() );
         return "/admin/list";
     }
 

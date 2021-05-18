@@ -3,9 +3,7 @@ package com.demcare.demo.service.impl;
 import com.demcare.demo.config.PasswordEncoderBean;
 import com.demcare.demo.dao.*;
 import com.demcare.demo.entities.*;
-import com.demcare.demo.service.AssociationCarerPlayerService;
 import com.demcare.demo.service.UserService;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -19,7 +17,7 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Autowired
-    private AsociatedUserDao asociatedUserDao;
+    private AssociationInstitutionUserDao asociationInstitutionUserDao;
 
     @Autowired
     private AssociationCarerPlayerDao associationCarerPlayerDao;
@@ -85,7 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sentSolicitude(Long idInstitution, Long id) {
+    public void solicitudeInstitution(Long idInstitution, Long id) {
         SolicitudesInstitutions solicitud = new SolicitudesInstitutions();
         solicitud.setUserInstitution(userDao.findById(id).get());
         solicitud.setUser( userDao.findById(idInstitution).get());
@@ -94,10 +92,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void acceptInvitation(Long idInstitution, Long id) {
-        AsociatedUser asociacion = new AsociatedUser();
+        AssociationInstitutionUser asociacion = new AssociationInstitutionUser();
         asociacion.setUser( userDao.findById(id).get());
         asociacion.setUserInstitution( userDao.findById(idInstitution).get());
-        asociatedUserDao.save(asociacion);
+        asociationInstitutionUserDao.save(asociacion);
         List<InvitationsInstitutions> list =  invitationsInstitutionsDao.findAll();
         for(InvitationsInstitutions l: list){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
@@ -114,10 +112,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void acceptSolicitude(Long idInstitution, Long id) {
-        AsociatedUser asociacion = new AsociatedUser();
+        AssociationInstitutionUser asociacion = new AssociationInstitutionUser();
         asociacion.setUser( userDao.findById(id).get());
         asociacion.setUserInstitution( userDao.findById(idInstitution).get());
-        asociatedUserDao.save(asociacion);
+        asociationInstitutionUserDao.save(asociacion);
         List<SolicitudesInstitutions> list =  solicitudesDao.findAll();
         for(SolicitudesInstitutions l: list){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
@@ -142,7 +140,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<User> getUsersList() {
+    public List<User> getAdminList() {
         Iterable<User> iterable = userDao.findAll();
         List <User> list = new ArrayList<User>();
         for (User item : iterable) {
@@ -154,7 +152,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getCuidadores() {
+    public List<User> getCarerList() {
         Iterable<User> iterable = userDao.findAll();
         List <User> list = new ArrayList<User>();
         for (User item : iterable) {
@@ -166,7 +164,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getJugadores() {
+    public List<User> getPlayerList() {
         Iterable<User> iterable = userDao.findAll();
         List <User> list = new ArrayList<User>();
         for (User item : iterable) {
@@ -178,7 +176,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getPosibleAsociatedUsers() {
+    public List<User> getCarerAndPlayerList() {
         Iterable<User> iterable = userDao.findAll();
         List <User> list = new ArrayList<User>();
         for (User item : iterable) {
@@ -202,14 +200,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsersWithAsociation(Long idInstitution) {
-        Iterable<User>  userList = getPosibleAsociatedUsers();
-        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+    public List<User> getAssociateUsers(Long idInstitution) {
+        Iterable<User>  userList = getCarerAndPlayerList();
+        Iterable<AssociationInstitutionUser> iterable = asociationInstitutionUserDao.findAll();
         List <User> list = new ArrayList<User>();
 
         for (User item : userList) {
             boolean asociado = false;
-            for (AsociatedUser it : iterable) {
+            for (AssociationInstitutionUser it : iterable) {
                 if(it.getUser().getId() == item.getId() && idInstitution == it.getUserInstitution().getId()){
                     asociado = true;
                 }
@@ -222,14 +220,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getCuidadoresAsociados(Long idInstitution) {
-        Iterable<User>  userList = getCuidadores();
-        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+    public List<User> getAssociateCarers(Long idInstitution) {
+        Iterable<User>  userList = getCarerList();
+        Iterable<AssociationInstitutionUser> iterable = asociationInstitutionUserDao.findAll();
         List <User> list = new ArrayList<User>();
 
         for (User item : userList) {
             boolean asociado = false;
-            for (AsociatedUser it : iterable) {
+            for (AssociationInstitutionUser it : iterable) {
                 if(it.getUser().getId() == item.getId() && idInstitution == it.getUserInstitution().getId()){
                     asociado = true;
                 }
@@ -242,13 +240,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getJugadoresNoAsociadosAsociados(List<User> jugadoresNoAsociados, Long idInstitution) {
-        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+    public List<User> getNotAssociatedPlayersWithCarer(List<User> jugadoresNoAsociados, Long idInstitution) {
+        Iterable<AssociationInstitutionUser> iterable = asociationInstitutionUserDao.findAll();
         List <User> list = new ArrayList<User>();
 
         for (User jugadorNoAsociado : jugadoresNoAsociados) {
             boolean asociado = false;
-            for (AsociatedUser asociacion : iterable) {
+            for (AssociationInstitutionUser asociacion : iterable) {
                 if(asociacion.getUserInstitution().getId() == idInstitution && asociacion.getUser().getId() == jugadorNoAsociado.getId()){
                     asociado = true;
                 }
@@ -263,11 +261,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getInstitutionsWithAsociation(Long idUser) {
         Iterable<User>  userList = getInstitutions();
-        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+        Iterable<AssociationInstitutionUser> iterable = asociationInstitutionUserDao.findAll();
         List <User> list = new ArrayList<User>();
 
         for (User item : userList) {
-            for (AsociatedUser it : iterable) {
+            for (AssociationInstitutionUser it : iterable) {
                 if(it.getUser().getId() == idUser && item.getId() == it.getUserInstitution().getId()){
                     list.add(item);
                 }
@@ -301,13 +299,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsersWithoutAsociation(Long idInstitution) {
-        Iterable<User>  userList = getPosibleAsociatedUsers();
-        Iterable<AsociatedUser> iterable = asociatedUserDao.findAll();
+        Iterable<User>  userList = getCarerAndPlayerList();
+        Iterable<AssociationInstitutionUser> iterable = asociationInstitutionUserDao.findAll();
         List <User> list = new ArrayList<User>();
 
         for (User item : userList) {
             boolean asociado = false;
-            for (AsociatedUser it : iterable) {
+            for (AssociationInstitutionUser it : iterable) {
                 if(it.getUser().getId() == item.getId() && idInstitution == it.getUserInstitution().getId()){
                     asociado = true;
                 }
@@ -414,10 +412,10 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        Iterable<AsociatedUser> iterable2 = asociatedUserDao.findAll();
+        Iterable<AssociationInstitutionUser> iterable2 = asociationInstitutionUserDao.findAll();
         for(User usuariosWithoutRequest: list){
             boolean asociada = false;
-            for(AsociatedUser asociation: iterable2){
+            for(AssociationInstitutionUser asociation: iterable2){
                 if(asociation.getUserInstitution().getId() == usuariosWithoutRequest.getId() && idUser == asociation.getUser().getId()){
                     asociada = true;
                 }
@@ -431,10 +429,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getJugadoresNoAsociados(User user) {
+    public List<User> getNotAssociatedPlayers(User user) {
         Iterable<AssociationCarerPlayer> iterable = associationCarerPlayerDao.findAll();
         List <User> list = new ArrayList<User>();
-        List <User> allJugadores = getJugadores();
+        List <User> allJugadores = getPlayerList();
         List <User> list2 = new ArrayList<User>();
         List <User> finalList = new ArrayList<User>();
         for(AssociationCarerPlayer a: iterable){
