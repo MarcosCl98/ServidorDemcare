@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GameServiceImpl implements GameService {
@@ -22,6 +23,20 @@ public class GameServiceImpl implements GameService {
     @Override
     public Game save(Game game) {
         return gameDao.save(game);
+    }
+
+    @Override
+    public void activate(Long id) {
+        Optional<Game> game = gameDao.findById(id);
+        game.get().setDesactive(false);
+        gameDao.save(game.get());
+    }
+
+    @Override
+    public void desactivate(Long id) {
+        Optional<Game> game = gameDao.findById(id);
+        game.get().setDesactive(true);
+        gameDao.save(game.get());
     }
 
     @Override
@@ -36,6 +51,18 @@ public class GameServiceImpl implements GameService {
         for (Game item : iterable) {
             list.add( item);
 
+        }
+        return list;
+    }
+
+    @Override
+    public List<Game> findActiveGames() {
+        Iterable<Game> iterable = gameDao.findAll();
+        List <Game> list = new ArrayList<Game>();
+        for (Game item : iterable) {
+            if(!item.getDesactive()){
+                list.add( item);
+            }
         }
         return list;
     }

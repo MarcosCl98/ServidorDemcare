@@ -56,5 +56,18 @@ public class AdminController extends DemcareController {
         return "redirect:/admin/list";
     }
 
+    @RequestMapping("/admin/desactive/{id}" )
+    public String desactivateGame(@PathVariable Long id){
+        gameService.desactivate(id);
+        return "redirect:/admin/listgames";
+    }
+
+    @RequestMapping("/admin/activategame/{id}" )
+    public String activateGame(@PathVariable Long id){
+        gameService.activate(id);
+        return "redirect:/admin/listgames";
+    }
+
+
 
 }

@@ -65,6 +65,7 @@
                     <li sec:authorize="hasRole('JUGADOR')"><a href="/jugador/listInvitations"  th:text="#{nav.show.invitations}">Ver invitaciones </a></li>
                 </ul>
             </li>
+
             <li sec:authorize="hasRole('ADMIN')" id= "games-menu" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.gamemanagement}">
                     Gestión de Juegos <span class="caret"></span>
@@ -74,6 +75,17 @@
 
                 </ul>
             </li>
+
+            <li sec:authorize="hasRole('JUGADOR')" id= "games-menu3" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.gamemanagement}">
+                    Gestión de Juegos <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li sec:authorize="hasRole('JUGADOR')"><a href="/jugador/playgames"  th:text="#{nav.listgames}">Ver juegos</a></li>
+
+                </ul>
+            </li>
+
             <li sec:authorize="hasRole('INSTITUCION')" id= "games-menu2" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.gamemanagement}">
                     Gestión de Juegos <span class="caret"></span>

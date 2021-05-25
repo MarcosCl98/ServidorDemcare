@@ -9,6 +9,9 @@ import java.util.List;
 public interface GameService {
     Game findByTitulo(String titulo);
     List<Game> findAll();
+    List<Game> findActiveGames();
     Game save(Game game);
+    void activate(Long id);
+    void desactivate(Long id);
 
 }

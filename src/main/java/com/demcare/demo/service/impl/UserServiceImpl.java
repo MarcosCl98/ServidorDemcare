@@ -62,7 +62,6 @@ public class UserServiceImpl implements UserService {
     public void suspendUser(Long id) {
         Optional<User> user = userDao.findById(id);
         user.get().setSuspend(true);
-        userDao.deleteById(id);
         userDao.save(user.get());
     }
 
@@ -70,7 +69,6 @@ public class UserServiceImpl implements UserService {
     public void activateUser(Long id) {
         Optional<User> user = userDao.findById(id);
         user.get().setSuspend(false);
-        userDao.deleteById(id);
         userDao.save(user.get());
     }
 

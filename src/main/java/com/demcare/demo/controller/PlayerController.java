@@ -27,6 +27,9 @@ public class PlayerController extends DemcareController {
     private UserService userService;
 
     @Autowired
+    private GameService gameService;
+
+    @Autowired
     private SecurityService securityService;
 
     @RequestMapping(value = "/jugador/addphoto", method = RequestMethod.GET)
@@ -77,6 +80,17 @@ public class PlayerController extends DemcareController {
         User user = userService.findByMail(username);
         userService.acceptInvitation(id,user.getId());
         return "redirect:/jugador/listInvitations";
+    }
+
+    @RequestMapping("/jugador/playgames")
+    public String getListGames(Model model){
+        model.addAttribute("gameList", gameService.findActiveGames() );
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        model.addAttribute("user", user.getId() );
+        return "/jugador/playgames" ;
     }
 
 }
