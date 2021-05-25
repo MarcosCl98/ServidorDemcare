@@ -66,11 +66,11 @@
                 </ul>
             </li>
             <li sec:authorize="hasRole('ADMIN')" id= "games-menu" class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.usermanagement}">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" th:text="#{nav.gamemanagement}">
                     Gestión de Juegos <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('ADMIN')"><a href="/user/add"  th:text="#{nav.addgame}">Agregar Usuario</a></li>
+                    <li sec:authorize="hasRole('ADMIN')"><a href="/admin/listgames"  th:text="#{nav.listgames}">Ver juegos</a></li>
 
                 </ul>
             </li>

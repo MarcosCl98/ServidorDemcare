@@ -64,4 +64,9 @@ public class UserController extends DemcareController {
         return "home";
     }
 
+    @RequestMapping(value = { "/games/index" }, method = RequestMethod.GET)
+    public String matching(Model model) {
+        return "/games/index";
+    }
+
 }

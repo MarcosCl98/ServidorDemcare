@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments/head"/>
+<body>
+
+<!-- Barra de Navegación superior -->
+<head th:replace="fragments/nav"/>
+
+
+
+<div class="container">
+  <h2 th:text="#{games}">Juegos</h2>
+
+    <div class="table-responsive">
+      <table class="table table-hover" th:fragment="tableUsers" id="tableUsers">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th th:text="#{games.title}">Título</th>
+        <th th:text="#{games.description}">Descripción</th>
+          <th class="col-md-1"> </th>
+      </tr>
+    </thead>
+	<tbody>
+	  <tr th:each="game : ${gameList}">
+	    <td th:text="${game.titulo}"></td>
+	    <td th:text="${game.descripcion}"></td>
+	    <td>
+            <a  th:href="${game.url} + '?' + ${user}" target="_blank" >play</a>
+        </td>
+	  </tr>
+	</tbody>
+  </table>
+      </table>
+  </div>
+</div>
+
+<footer th:replace="fragments/footer"/>
+</body>
+</html>
