@@ -25,10 +25,6 @@
 	  <tr th:each="game : ${gameList}">
 	    <td th:text="${game.titulo}"></td>
 	    <td th:text="${game.descripcion}"></td>
-          <td>
-              <a th:if="${!game.desactive}" th:href="${'/admin/desactive/' + game.id}" th:text="#{game.desactive}">desactivar</a>
-              <a th:unless="${!game.desactive}" th:href="${'/admin/activategame/' + game.id}"th:text="#{game.active}">activar</a>
-          </td>
 	  </tr>
 	</tbody>
   </table>

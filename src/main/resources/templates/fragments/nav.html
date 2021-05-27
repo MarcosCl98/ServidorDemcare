@@ -10,8 +10,6 @@
                 <ul class="dropdown-menu">
                     <li sec:authorize="hasRole('ADMIN')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
                     <li sec:authorize="hasRole('ADMIN')"><a href="/admin/list" th:text="#{nav.showusers}">Ver Usuarios</a></li>
-                    <li sec:authorize="hasRole('ADMIN')"><a href="/user/add"  th:text="#{nav.addusers}">Agregar Usuario</a></li>
-
                 </ul>
             </li>
             <li sec:authorize="hasRole('INSTITUCION')" id= "users-menu2" class="dropdown">
