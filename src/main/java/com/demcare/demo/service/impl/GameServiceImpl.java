@@ -2,10 +2,8 @@ package com.demcare.demo.service.impl;
 
 import com.demcare.demo.dao.*;
 import com.demcare.demo.entities.*;
-import com.demcare.demo.service.AssociationInstitutionUserService;
 import com.demcare.demo.service.GameService;
-import com.demcare.demo.service.GamesService;
-import com.demcare.demo.service.TokenService;
+import com.demcare.demo.service.AssociationInstitutionGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,7 @@ public class GameServiceImpl implements GameService {
     GameDao gameDao;
 
     @Autowired
-    GamesService gamesService;
+    AssociationInstitutionGameService associationInstitutionGameService;
 
     @Autowired
     UserDao userDao;
@@ -70,7 +68,7 @@ public class GameServiceImpl implements GameService {
         if(asociaciones.size() >0){
             User insti = asociaciones.get(0).getUserInstitution();
             Long id = insti.getId();
-            Iterable <Game> games = gamesService.findByInstitutionId(id);
+            Iterable <Game> games = associationInstitutionGameService.findByInstitutionId(id);
         }else{
             Iterable<Game> iterable = gameDao.findAll();
             for (Game item : iterable) {

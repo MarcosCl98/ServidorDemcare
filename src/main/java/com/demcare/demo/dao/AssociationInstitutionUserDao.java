@@ -12,5 +12,7 @@ import java.util.List;
 @Repository
 public interface AssociationInstitutionUserDao extends CrudRepository<AssociationInstitutionUser, Long>, JpaSpecificationExecutor<AssociationInstitutionUser> {
     List<AssociationInstitutionUser> findByUser(User user);
+    List<AssociationInstitutionUser> findByUserInstitution(User user);
+    void deleteById(Long id);
 
 }

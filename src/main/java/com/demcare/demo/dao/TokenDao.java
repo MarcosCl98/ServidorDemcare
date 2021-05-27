@@ -13,5 +13,6 @@ public interface TokenDao extends CrudRepository<Token, Long>, JpaSpecificationE
     Token save(Token token);
     Token findByUser(User user);
     Token findByCode(String tokenCode);
+    void deleteById(Long id);
 
 }

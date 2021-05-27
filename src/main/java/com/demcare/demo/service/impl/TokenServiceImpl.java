@@ -25,6 +25,11 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public void deleteToken(Long id) {
+        tokenDao.deleteById(id);
+    }
+
+    @Override
     public Token findByCode(String tokenCode) {
         return tokenDao.findByCode(tokenCode);
     }

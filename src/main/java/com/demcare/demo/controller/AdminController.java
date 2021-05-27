@@ -1,6 +1,6 @@
 package com.demcare.demo.controller;
 
-import com.demcare.demo.entities.User;
+import com.demcare.demo.entities.*;
 import com.demcare.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -11,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 
 @Controller
 public class AdminController extends DemcareController {
@@ -19,7 +21,25 @@ public class AdminController extends DemcareController {
     private UserService userService;
 
     @Autowired
+    private AssociationInstitutionUserService associationInstitutionUserService;
+
+    @Autowired
+    private AssociationCarerPlayerService associationCarerPlayerService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private SolicitudesService solicitudesService;
+
+    @Autowired
+    private InvitationsService invitationsService;
+
+    @Autowired
     private GameService gameService;
+
+    @Autowired
+    private AssociationInstitutionGameService associationInstitutionGameService;
 
     @RequestMapping("/admin/list")
     public String getList(Model model){
@@ -40,6 +60,62 @@ public class AdminController extends DemcareController {
 
     @RequestMapping("/admin/delete/{id}" )
     public String deleteUser(@PathVariable Long id){
+        User userToDelete = userService.findById(id);
+        //Borramos primero todas sus asociaciones
+        List<AssociationInstitutionUser> listAssocitionsInstitution = associationInstitutionUserService.findByUser(userToDelete);
+        for(AssociationInstitutionUser a: listAssocitionsInstitution){
+            associationInstitutionUserService.deleteAssociationInstitutionUser(a.getId());
+        }
+
+        listAssocitionsInstitution = associationInstitutionUserService.findByUserInstitution(userToDelete);
+        for(AssociationInstitutionUser a: listAssocitionsInstitution){
+            associationInstitutionUserService.deleteAssociationInstitutionUser(a.getId());
+        }
+
+        List<AssociationCarerPlayer> listAssociationCarer = associationCarerPlayerService.findByCarerUser(userToDelete);
+        for(AssociationCarerPlayer a: listAssociationCarer){
+            associationCarerPlayerService.deleteAssociationCarerPlayer(a.getId());
+        }
+
+        listAssociationCarer = associationCarerPlayerService.findByPlayerUser(userToDelete);
+        for(AssociationCarerPlayer a: listAssociationCarer){
+            associationCarerPlayerService.deleteAssociationCarerPlayer(a.getId());
+        }
+
+        //Borramos token
+        Token token = tokenService.findByUser(userToDelete);
+        if(token != null){
+            tokenService.deleteToken(token.getId());
+        }
+
+        //Borramos solicitudes
+        List<SolicitudesInstitutions> listSolicitudes = solicitudesService.findByUser(userToDelete);
+        for(SolicitudesInstitutions a: listSolicitudes){
+            solicitudesService.deleteSolicitude(a.getId());
+        }
+
+        listSolicitudes = solicitudesService.findByUserInstitution(userToDelete);
+        for(SolicitudesInstitutions a: listSolicitudes){
+            solicitudesService.deleteSolicitude(a.getId());
+        }
+
+        //Borramos invitaciones
+        List<InvitationsInstitutions> listInvitations = invitationsService.findByUser(userToDelete);
+        for(InvitationsInstitutions a: listInvitations){
+            invitationsService.deleteInvitation(a.getId());
+        }
+
+        listInvitations = invitationsService.findByUserInstitution(userToDelete);
+        for(InvitationsInstitutions a: listInvitations){
+            invitationsService.deleteInvitation(a.getId());
+        }
+
+        //Borramos juegos si es una institucion
+        List<AssociationInstitutionGame> listGames = associationInstitutionGameService.findByInstitution(userToDelete);
+        for(AssociationInstitutionGame a: listGames){
+            associationInstitutionGameService.deleteById(a.getId());
+        }
+
         userService.deleteUser(id);
         return "redirect:/admin/list";
     }

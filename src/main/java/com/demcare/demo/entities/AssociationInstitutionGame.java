@@ -5,9 +5,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="games")
+@Table(name="association_institution_game")
 @NoArgsConstructor @AllArgsConstructor @Builder @ToString
-public class Games implements Serializable {
+public class AssociationInstitutionGame implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -10,4 +10,6 @@ import java.util.List;
 public interface AssociationInstitutionUserService {
     AssociationInstitutionUser save(AssociationInstitutionUser associationInstitutionUser);
     List<AssociationInstitutionUser> findByUser(User user);
+    List<AssociationInstitutionUser> findByUserInstitution(User user);
+    void deleteAssociationInstitutionUser(Long id);
 }

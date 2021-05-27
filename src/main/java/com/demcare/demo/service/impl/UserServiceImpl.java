@@ -94,13 +94,13 @@ public class UserServiceImpl implements UserService {
         asociacion.setUser( userDao.findById(id).get());
         asociacion.setUserInstitution( userDao.findById(idInstitution).get());
         asociationInstitutionUserDao.save(asociacion);
-        List<InvitationsInstitutions> list =  invitationsInstitutionsDao.findAll();
+        Iterable<InvitationsInstitutions> list =  invitationsInstitutionsDao.findAll();
         for(InvitationsInstitutions l: list){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
                 invitationsInstitutionsDao.deleteById(l.getId());
             }
         }
-        List<SolicitudesInstitutions> list2 =  solicitudesDao.findAll();
+        Iterable<SolicitudesInstitutions> list2 =  solicitudesDao.findAll();
         for(SolicitudesInstitutions l: list2){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
                 solicitudesDao.deleteById(l.getId());
@@ -114,13 +114,13 @@ public class UserServiceImpl implements UserService {
         asociacion.setUser( userDao.findById(id).get());
         asociacion.setUserInstitution( userDao.findById(idInstitution).get());
         asociationInstitutionUserDao.save(asociacion);
-        List<SolicitudesInstitutions> list =  solicitudesDao.findAll();
+        Iterable<SolicitudesInstitutions> list =  solicitudesDao.findAll();
         for(SolicitudesInstitutions l: list){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
                 solicitudesDao.deleteById(l.getId());
             }
         }
-        List<InvitationsInstitutions> list2 =  invitationsInstitutionsDao.findAll();
+        Iterable<InvitationsInstitutions> list2 =  invitationsInstitutionsDao.findAll();
         for(InvitationsInstitutions l: list2){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
                 invitationsInstitutionsDao.deleteById(l.getId());

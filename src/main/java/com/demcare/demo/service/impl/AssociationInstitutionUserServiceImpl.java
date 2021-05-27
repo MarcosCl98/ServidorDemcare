@@ -24,15 +24,17 @@ public class AssociationInstitutionUserServiceImpl implements AssociationInstitu
 
     @Override
     public List<AssociationInstitutionUser>  findByUser(User user) {
-        Iterable<AssociationInstitutionUser> asociaciones = associationInstitutionUserDao.findAll();
-        List<AssociationInstitutionUser> list = new ArrayList<>();
+        return associationInstitutionUserDao.findByUser(user);
+    }
 
-        for(AssociationInstitutionUser a: asociaciones){
-            if(a.getUser().getId() == user.getId()){
-                list.add(a);
-            }
-        }
-        return list;
+    @Override
+    public List<AssociationInstitutionUser> findByUserInstitution(User user) {
+        return associationInstitutionUserDao.findByUserInstitution(user);
+    }
+
+    @Override
+    public void deleteAssociationInstitutionUser(Long id) {
+        associationInstitutionUserDao.deleteById(id);
     }
 
 
