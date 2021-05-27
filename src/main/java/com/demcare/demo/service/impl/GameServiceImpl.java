@@ -1,11 +1,10 @@
 package com.demcare.demo.service.impl;
 
-import com.demcare.demo.dao.GameDao;
-import com.demcare.demo.dao.TokenDao;
-import com.demcare.demo.entities.Game;
-import com.demcare.demo.entities.Token;
-import com.demcare.demo.entities.User;
+import com.demcare.demo.dao.*;
+import com.demcare.demo.entities.*;
+import com.demcare.demo.service.AssociationInstitutionUserService;
 import com.demcare.demo.service.GameService;
+import com.demcare.demo.service.GamesService;
 import com.demcare.demo.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,15 @@ public class GameServiceImpl implements GameService {
     @Autowired
     GameDao gameDao;
 
+    @Autowired
+    GamesService gamesService;
+
+    @Autowired
+    UserDao userDao;
+
+    @Autowired
+    AssociationInstitutionUserDao associationInstitutionUserDao;
+
     @Override
     public Game save(Game game) {
         return gameDao.save(game);
@@ -28,14 +36,14 @@ public class GameServiceImpl implements GameService {
     @Override
     public void activate(Long id) {
         Optional<Game> game = gameDao.findById(id);
-        game.get().setDesactive(false);
+        //game.get().setDesactive(false);
         gameDao.save(game.get());
     }
 
     @Override
     public void desactivate(Long id) {
         Optional<Game> game = gameDao.findById(id);
-        game.get().setDesactive(true);
+        //game.get().setDesactive(true);
         gameDao.save(game.get());
     }
 
@@ -56,11 +64,16 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public List<Game> findActiveGames() {
-        Iterable<Game> iterable = gameDao.findAll();
+    public List<Game> findActiveGames(Long idJugador) {
+        List<AssociationInstitutionUser>  asociaciones = associationInstitutionUserDao.findByUser(userDao.findById(idJugador).get());
         List <Game> list = new ArrayList<Game>();
-        for (Game item : iterable) {
-            if(!item.getDesactive()){
+        if(asociaciones.size() >0){
+            User insti = asociaciones.get(0).getUserInstitution();
+            Long id = insti.getId();
+            Iterable <Game> games = gamesService.findByInstitutionId(id);
+        }else{
+            Iterable<Game> iterable = gameDao.findAll();
+            for (Game item : iterable) {
                 list.add( item);
             }
         }

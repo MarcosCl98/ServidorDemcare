@@ -1,6 +1,7 @@
 package com.demcare.demo.controller;
 
 import com.demcare.demo.entities.AssociationCarerPlayer;
+import com.demcare.demo.entities.AssociationInstitutionUser;
 import com.demcare.demo.entities.Token;
 import com.demcare.demo.entities.User;
 import com.demcare.demo.service.*;
@@ -28,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Controller
 public class CarerController extends DemcareController {
@@ -37,6 +39,9 @@ public class CarerController extends DemcareController {
 
     @Autowired
     private AssociationCarerPlayerService associationCarerPlayerService;
+
+    @Autowired
+    private AssociationInstitutionUserService associationInstitutionUserService;
 
     @Autowired
     private TokenService tokenService;
@@ -136,6 +141,45 @@ public class CarerController extends DemcareController {
         return "/cuidador/add";
     }
 
+    @RequestMapping("/cuidador/listCuidadores")
+    public String getCuidadores(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        List<User> institutionsAsociated = userService.getInstitutionsWithAsociation(user.getId());
+        model.addAttribute("cuidadores", userService.getAssociateCarersWithoutUserAuthenticated(institutionsAsociated,user.getId()));
+        return "/cuidador/listCuidadores";
+    }
+
+    @RequestMapping("/cuidador/listJugadores/{id}" )
+    public String getJugadores(Model model,@PathVariable Long id, HttpServletRequest request){
+        User user = userService.findById(id);
+        request.getSession().setAttribute("cuidador",user);
+
+        return "redirect:/cuidador/listJugadores";
+    }
+
+    @RequestMapping("/cuidador/listJugadores" )
+    public String getJugadoresList(Model model, HttpServletRequest request){
+        User cuidador2 = (User) request.getSession().getAttribute("cuidador");
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User cuidador1 = userService.findByMail(username);
+        List<User> jugadoresAsocidados = userService.getAssociatedUsers(cuidador1, cuidador2);
+        model.addAttribute("jugadoresAsocidados", jugadoresAsocidados);
+        return "/cuidador/listJugadores";
+    }
+
+    @RequestMapping("/cuidador/asociate/{id}" )
+    public String asociateUser(@PathVariable Long id, HttpServletRequest request){
+        User carer = (User) request.getSession().getAttribute("cuidador");
+        User player = userService.findById(id);
+        userService.asociateCarerPlayer(carer.getId(),player.getId());
+        return "redirect:/cuidador/listJugadores";
+    }
+
     @RequestMapping(value="/cuidador/add", method=RequestMethod.POST )
     public String setUser(@Validated User user, BindingResult result, Model
             model, HttpServletRequest request) {
@@ -162,6 +206,16 @@ public class CarerController extends DemcareController {
         asociation.setCarerUser(carer);
         asociation.setPlayerUser(user);
         associationCarerPlayerService.save(asociation);
+
+
+        List<AssociationInstitutionUser> list = associationInstitutionUserService.findByUser(carer);
+        for(AssociationInstitutionUser a: list){
+            AssociationInstitutionUser asociationInstitution = new AssociationInstitutionUser();
+            asociationInstitution.setUser(user);
+            asociationInstitution.setUserInstitution(a.getUserInstitution());
+            associationInstitutionUserService.save(asociationInstitution);
+        }
+
 
         File folder = new File("src/main/resources/static/html/" );
         File[] files = folder.listFiles();

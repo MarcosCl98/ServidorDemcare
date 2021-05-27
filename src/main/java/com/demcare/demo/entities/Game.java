@@ -27,11 +27,4 @@ public class Game implements Serializable {
     @Setter
     private String url;
 
-    @Getter
-    @Setter
-    private boolean desactive;
-
-    public boolean getDesactive() {
-        return desactive;
-    }
 }

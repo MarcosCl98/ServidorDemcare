@@ -31,11 +31,14 @@ public interface UserService {
     List<User> getSolicitudes(Long idUser);
 
     List<User> getAssociateCarers(Long idInstitution);
+    List<User> getAssociateCarersWithoutUserAuthenticated(List<User> institucionesAsociadas, Long idUser);
     List<User> getAssociateUsers(Long idInstitution);
 
     /*Asociados a la institución pero no a un cuidador*/
     List<User> getNotAssociatedPlayersWithCarer(List<User> jugadoresNoAsociados, Long idInstitution);
     List<User> getNotAssociatedPlayers(User user);
+
+    List<User> getAssociatedUsers(User cuidador1, User cuidador2);
 
     List<User> getInstitutionsWithAsociation(Long idUser);
     List<User> getRequestInstitutions(Long idUser);

@@ -238,6 +238,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getAssociateCarersWithoutUserAuthenticated(List<User> institucionesAsociadas, Long idUser) {
+        List<User> finalList = new ArrayList<User>();
+        for(User u: institucionesAsociadas){
+            List<User> list =  getAssociateCarers(u.getId());
+            for(User ulist: list){
+                if(ulist.getId() != idUser){
+                    boolean contiene = false;
+                    for(User userList: finalList){
+                        if(userList.getId() == ulist.getId()){
+                            contiene= true;
+                        }
+                    }
+                    if(!contiene){
+                        finalList.add(ulist);
+                    }
+
+                }
+            }
+        }
+        return finalList;
+    }
+
+    @Override
     public List<User> getNotAssociatedPlayersWithCarer(List<User> jugadoresNoAsociados, Long idInstitution) {
         Iterable<AssociationInstitutionUser> iterable = asociationInstitutionUserDao.findAll();
         List <User> list = new ArrayList<User>();
@@ -451,6 +474,56 @@ public class UserServiceImpl implements UserService {
             }
         }
         return list2;
+    }
+
+    @Override
+    public List<User> getAssociatedUsers(User cuidador1, User cuidador2) {
+        List<AssociationInstitutionUser> asociacionesCuidador1 = asociationInstitutionUserDao.findByUser(cuidador1);
+        List<AssociationInstitutionUser> asociacionesCuidador2 = asociationInstitutionUserDao.findByUser(cuidador2);
+        List<AssociationInstitutionUser> asociacionesComunes = new ArrayList<>();
+        List<User> finalList = new ArrayList<>();
+        for(AssociationInstitutionUser a1: asociacionesCuidador1){
+            for(AssociationInstitutionUser a2: asociacionesCuidador2){
+                if(a1.getUserInstitution().getId() == a2.getUserInstitution().getId()){
+                    asociacionesComunes.add(a1);
+                }
+            }
+        }
+
+        Iterable<AssociationInstitutionUser> allAsociations = asociationInstitutionUserDao.findAll();
+        for(AssociationInstitutionUser a: allAsociations){
+            for(AssociationInstitutionUser aC: asociacionesComunes){
+                if(a.getUserInstitution().getId() == aC.getUserInstitution().getId() && a.getUser().getRole().equals("ROLE_JUGADOR")){
+                    boolean repetido = false;
+                    for(User u: finalList){
+                        if(u.getId() == a.getUser().getId()){
+                            repetido = true;
+                        }
+                    }
+                    if(!repetido){
+                        finalList.add(a.getUser());
+                    }
+
+                }
+            }
+
+        }
+        List<User> finalFinalList = new ArrayList<>();
+        Iterable<AssociationCarerPlayer> usuariosYaAsociados =  associationCarerPlayerDao.findByCarerUser(cuidador2);
+        for(User user: finalList){
+            boolean asociado = false;
+            for(AssociationCarerPlayer aC: usuariosYaAsociados){
+                if(user.getId() == aC.getPlayerUser().getId()){
+                    asociado = true;
+                }
+
+            }
+            if(!asociado){
+                finalFinalList.add(user);
+            }
+
+        }
+        return finalFinalList;
     }
 
 }

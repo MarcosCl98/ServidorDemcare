@@ -1,14 +1,14 @@
 package com.demcare.demo.entities;
-
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="asociation_institution_user")
+@Table(name="games")
 @NoArgsConstructor @AllArgsConstructor @Builder @ToString
-public class AssociationInstitutionUser implements Serializable {
+public class Games implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -17,14 +17,21 @@ public class AssociationInstitutionUser implements Serializable {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude @ToString.Exclude
     @JoinColumn(name = "id_institution")
     @Getter @Setter
-    private User userInstitution;
+    private User institution;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude @ToString.Exclude
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "id_game")
     @Getter @Setter
-    private User user;
+    private Game game;
+
+    @Getter
+    @Setter
+    private boolean desactivate;
+
+
+    public boolean getDesactive() {
+        return desactivate;
+    }
 }

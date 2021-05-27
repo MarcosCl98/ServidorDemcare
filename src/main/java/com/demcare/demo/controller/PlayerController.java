@@ -84,11 +84,11 @@ public class PlayerController extends DemcareController {
 
     @RequestMapping("/jugador/playgames")
     public String getListGames(Model model){
-        model.addAttribute("gameList", gameService.findActiveGames() );
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
+        model.addAttribute("gameList", gameService.findActiveGames(user.getId()) );
         model.addAttribute("user", user.getId() );
         return "/jugador/playgames" ;
     }
