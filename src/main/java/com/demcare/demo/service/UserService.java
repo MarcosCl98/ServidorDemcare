@@ -8,6 +8,7 @@ import java.util.List;
 @Service
 public interface UserService {
     User findByMail(String mail);
+    User findByName(String name);
     User findById(Long id);
     User register(User userEntity);
     User save(User user);
@@ -23,9 +24,11 @@ public interface UserService {
 
     List<User> getAdminList();
     List<User> getCarerList();
+    List<User> getCarerListWithoutUserSession(User user);
     List<User> getPlayerList();
     List<User> getCarerAndPlayerList();
     List<User> getInstitutions();
+    List<User> getInstitutionsAssociated(User user);
 
     List<User> getInvitations(Long idUser);
     List<User> getSolicitudes(Long idUser);

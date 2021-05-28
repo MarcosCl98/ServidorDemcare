@@ -32,6 +32,11 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoderBean passwordEncoderBean;
 
     @Override
+    public User findByName(String name) {
+        return userDao.findByName(name);
+    }
+
+    @Override
     public User findByMail(String mail) {
         return userDao.findByMail(mail);
     }
@@ -162,6 +167,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getCarerListWithoutUserSession(User user) {
+        Iterable<User> iterable = userDao.findAll();
+        List <User> list = new ArrayList<User>();
+        for (User item : iterable) {
+            if(item.getRole().equals("ROLE_CUIDADOR") && item.getId() != user.getId()){
+                list.add( item);
+            }
+        }
+        return list;
+    }
+
+    @Override
     public List<User> getPlayerList() {
         Iterable<User> iterable = userDao.findAll();
         List <User> list = new ArrayList<User>();
@@ -193,6 +210,18 @@ public class UserServiceImpl implements UserService {
             if(item.getRole().equals("ROLE_INSTITUCION")){
                 list.add( item);
             }
+        }
+        return list;
+    }
+
+    @Override
+    public List<User> getInstitutionsAssociated(User user) {
+        Iterable<AssociationInstitutionUser> iterable = asociationInstitutionUserDao.findAll();
+        List <User> list = new ArrayList<User>();
+        for (AssociationInstitutionUser item : iterable) {
+           if(item.getUser().getId() == user.getId()){
+               list.add(item.getUserInstitution());
+           }
         }
         return list;
     }
@@ -478,52 +507,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAssociatedUsers(User cuidador1, User cuidador2) {
-        List<AssociationInstitutionUser> asociacionesCuidador1 = asociationInstitutionUserDao.findByUser(cuidador1);
-        List<AssociationInstitutionUser> asociacionesCuidador2 = asociationInstitutionUserDao.findByUser(cuidador2);
-        List<AssociationInstitutionUser> asociacionesComunes = new ArrayList<>();
-        List<User> finalList = new ArrayList<>();
-        for(AssociationInstitutionUser a1: asociacionesCuidador1){
-            for(AssociationInstitutionUser a2: asociacionesCuidador2){
-                if(a1.getUserInstitution().getId() == a2.getUserInstitution().getId()){
-                    asociacionesComunes.add(a1);
-                }
-            }
-        }
-
-        Iterable<AssociationInstitutionUser> allAsociations = asociationInstitutionUserDao.findAll();
-        for(AssociationInstitutionUser a: allAsociations){
-            for(AssociationInstitutionUser aC: asociacionesComunes){
-                if(a.getUserInstitution().getId() == aC.getUserInstitution().getId() && a.getUser().getRole().equals("ROLE_JUGADOR")){
-                    boolean repetido = false;
-                    for(User u: finalList){
-                        if(u.getId() == a.getUser().getId()){
-                            repetido = true;
-                        }
-                    }
-                    if(!repetido){
-                        finalList.add(a.getUser());
-                    }
-
-                }
-            }
-
-        }
-        List<User> finalFinalList = new ArrayList<>();
-        Iterable<AssociationCarerPlayer> usuariosYaAsociados =  associationCarerPlayerDao.findByCarerUser(cuidador2);
-        for(User user: finalList){
+        List<AssociationCarerPlayer> jugadoresAsociadosCuidador1 = associationCarerPlayerDao.findByCarerUser(cuidador1);
+        List<AssociationCarerPlayer> jugadoresYaAsociadosCuidador2 = associationCarerPlayerDao.findByCarerUser(cuidador2);
+        List <User> finalList = new ArrayList<User>();
+        for(AssociationCarerPlayer a1: jugadoresAsociadosCuidador1){
             boolean asociado = false;
-            for(AssociationCarerPlayer aC: usuariosYaAsociados){
-                if(user.getId() == aC.getPlayerUser().getId()){
-                    asociado = true;
-                }
-
+            for(AssociationCarerPlayer a2: jugadoresYaAsociadosCuidador2){
+                    if(a2.getPlayerUser().getId() == a1.getPlayerUser().getId()){
+                        asociado = true;
+                    }
             }
             if(!asociado){
-                finalFinalList.add(user);
+                finalList.add(a1.getPlayerUser());
             }
-
         }
-        return finalFinalList;
+
+        return finalList;
     }
 
 }

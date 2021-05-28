@@ -33,6 +33,17 @@
         </select>
       </div>
     </div>
+    <div th:if="${institutionList.size() > 0}" class="form-group">
+      <label class="control-label col-sm-2" for=”institucion” th:text="#{user.institution}">Institución:</label>
+      <div class="col-sm-10">
+        <select id="institucion" class="form-control" name="institucion">
+          <option th:each="institucion : ${institutionList}"
+                  th:value="${institucion.name}"
+                  th:text="${institucion.name}">
+          </option>
+        </select>
+      </div>
+    </div>
     <div class="form-group" >
       <label class="control-label col-sm-2" for="mail" th:text="#{user.mail}">Email:</label>
       <div class="col-sm-10">

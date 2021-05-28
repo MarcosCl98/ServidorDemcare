@@ -11,7 +11,7 @@ import org.springframework.validation.Validator;
 @Component
 public class SingUpFormValidator implements Validator {
     @Autowired
-    private UserService usersService;
+    private UserService userService;
     @Override
     public boolean supports(Class<?> aClass) {
         return User.class.equals(aClass);
@@ -22,7 +22,7 @@ public class SingUpFormValidator implements Validator {
         User user = (User) o;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "mail", "Error.empty");
 
-        if (usersService.findByMail(user.getMail()) != null) {
+        if (userService.findByMail(user.getMail()) != null) {
             errors.rejectValue("mail", "Error.signup.email.duplicate");
         }
         if (user.getName().length() < 5 || user.getName().length() > 24) {

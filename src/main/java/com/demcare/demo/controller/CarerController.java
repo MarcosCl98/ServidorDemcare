@@ -1,9 +1,7 @@
 package com.demcare.demo.controller;
 
-import com.demcare.demo.entities.AssociationCarerPlayer;
-import com.demcare.demo.entities.AssociationInstitutionUser;
-import com.demcare.demo.entities.Token;
-import com.demcare.demo.entities.User;
+import com.demcare.demo.entities.*;
+import com.demcare.demo.models.UserModel;
 import com.demcare.demo.service.*;
 import com.demcare.demo.util.FileUploadUtil;
 import com.demcare.demo.util.SecureTokenGenerator;
@@ -136,8 +134,13 @@ public class CarerController extends DemcareController {
 
     @RequestMapping(value="/cuidador/add")
     public String getUser(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
         model.addAttribute("rolesList", rolesService.getRoleJugador());
-        model.addAttribute("user", new User());
+        model.addAttribute("institutionList", userService.getInstitutionsAssociated(user));
+        model.addAttribute("user", new UserModel());
         return "/cuidador/add";
     }
 
@@ -147,8 +150,7 @@ public class CarerController extends DemcareController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
-        List<User> institutionsAsociated = userService.getInstitutionsWithAsociation(user.getId());
-        model.addAttribute("cuidadores", userService.getAssociateCarersWithoutUserAuthenticated(institutionsAsociated,user.getId()));
+        model.addAttribute("cuidadores", userService.getCarerListWithoutUserSession(user));
         return "/cuidador/listCuidadores";
     }
 
@@ -181,14 +183,22 @@ public class CarerController extends DemcareController {
     }
 
     @RequestMapping(value="/cuidador/add", method=RequestMethod.POST )
-    public String setUser(@Validated User user, BindingResult result, Model
+    public String setUser(@Validated UserModel userModel, BindingResult result, Model
             model, HttpServletRequest request) {
-        signUpFormValidator.validate(user, result);
+        User user = new User();
+        user.setRole(userModel.getRole());
+        user.setName(userModel.getName());
+        user.setSurname(userModel.getSurname());
+        user.setMail(userModel.getMail());
+        user.setPassword(userModel.getPassword());
+        user.setPasswordConfirm(userModel.getPasswordConfirm());
+        userService.register(user);
+        /*signUpFormValidator.validate(user, result);
         if (result.hasErrors()) {
             return "singup";
-        }
+        }*/
         model.addAttribute("rolesList", rolesService.getRoles());
-        userService.register(user);
+
 
         Token token = new Token();
         token.setUser(user);
@@ -207,14 +217,11 @@ public class CarerController extends DemcareController {
         asociation.setPlayerUser(user);
         associationCarerPlayerService.save(asociation);
 
+        AssociationInstitutionUser asociationInstitution = new AssociationInstitutionUser();
+        asociationInstitution.setUserInstitution(userService.findByName(userModel.getInstitucion()));
+        asociationInstitution.setUser(user);
+        associationInstitutionUserService.save(asociationInstitution);
 
-        List<AssociationInstitutionUser> list = associationInstitutionUserService.findByUser(carer);
-        for(AssociationInstitutionUser a: list){
-            AssociationInstitutionUser asociationInstitution = new AssociationInstitutionUser();
-            asociationInstitution.setUser(user);
-            asociationInstitution.setUserInstitution(a.getUserInstitution());
-            associationInstitutionUserService.save(asociationInstitution);
-        }
 
 
         File folder = new File("src/main/resources/static/html/" );
