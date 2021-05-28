@@ -17,6 +17,12 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Autowired
+    private GameDao gameDao;
+
+    @Autowired
+    private AssociationInstitutionGameDao associationInstitutionGameDao;
+
+    @Autowired
     private AssociationInstitutionUserDao asociationInstitutionUserDao;
 
     @Autowired
@@ -387,6 +393,17 @@ public class UserServiceImpl implements UserService {
         return list;
     }
 
+    @Override
+    public void addAsociationGames(User user) {
+        Iterable<Game> gameList = gameDao.findAll();
+
+        for(Game g: gameList){
+            AssociationInstitutionGame asociacion = new AssociationInstitutionGame();
+            asociacion.setGame(g);
+            asociacion.setInstitution(user);
+            associationInstitutionGameDao.save(asociacion);
+        }
+    }
 
 
     @Override

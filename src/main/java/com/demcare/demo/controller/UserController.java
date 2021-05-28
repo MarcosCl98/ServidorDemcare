@@ -50,6 +50,9 @@ public class UserController extends DemcareController {
             return "singup";
         }
         userService.register(user);
+        if(user.getRole().equals("ROLE_INSTITUCION")){
+            userService.addAsociationGames(user);
+        }
         UsernamePasswordAuthenticationToken a = securityService.autoLogin(user.getMail(), user.getPasswordConfirm());
         return "redirect:home";
     }

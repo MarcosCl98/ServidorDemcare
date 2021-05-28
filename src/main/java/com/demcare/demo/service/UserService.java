@@ -50,4 +50,6 @@ public interface UserService {
     List<User> getUsersWithInvitationAndRequest(Long idInstitution);
     List<User> getUsersWithoutAsociation(Long idInstitution);
     List<User> getUsersWithoutInvitation(Long idInstitution);
+
+    void addAsociationGames(User user);
 }
