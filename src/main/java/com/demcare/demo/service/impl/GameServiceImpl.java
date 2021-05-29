@@ -18,7 +18,7 @@ public class GameServiceImpl implements GameService {
     GameDao gameDao;
 
     @Autowired
-    AssociationInstitutionGameService associationInstitutionGameService;
+    AssociationInstitutionGameDao associationInstitutionGameDao;
 
     @Autowired
     UserDao userDao;
@@ -63,16 +63,21 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public List<Game> findActiveGames(Long idJugador) {
-        List<AssociationInstitutionUser>  asociaciones = associationInstitutionUserDao.findByUser(userDao.findById(idJugador).get());
+        List<AssociationInstitutionUser> asociaciones = associationInstitutionUserDao.findByUser(userDao.findById(idJugador).get());
         List <Game> list = new ArrayList<Game>();
-        if(asociaciones.size() >0){
-            User insti = asociaciones.get(0).getUserInstitution();
-            Long id = insti.getId();
-            Iterable <Game> games = associationInstitutionGameService.findByInstitutionId(id);
+        if(asociaciones.size() > 0){
+            AssociationInstitutionUser asociacion = asociaciones.get(0);
+            User institucion = asociacion.getUserInstitution();
+            List<AssociationInstitutionGame> asociacionesJuego = associationInstitutionGameDao.findByInstitution(institucion);
+            for(AssociationInstitutionGame a: asociacionesJuego){
+                if(!a.getDesactive()){
+                    list.add(a.getGame());
+                }
+            }
         }else{
-            Iterable<Game> iterable = gameDao.findAll();
-            for (Game item : iterable) {
-                list.add( item);
+            Iterable <Game> iterable  = gameDao.findAll();
+            for(Game item: iterable){
+                list.add(item);
             }
         }
         return list;
