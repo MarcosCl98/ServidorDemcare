@@ -8,9 +8,13 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -144,6 +148,24 @@ public class AdminController extends DemcareController {
         return "redirect:/admin/listgames";
     }
 
+    @RequestMapping(value="/admin/addgame")
+    public String getUser(Model model){
+        model.addAttribute("game", new Game());
+        return "/admin/addgame";
+    }
 
+    @RequestMapping(value="/admin/addgame", method= RequestMethod.POST )
+    public String setUser(@Validated Game game, BindingResult result, Model
+            model, HttpServletRequest request) {
+        gameService.save(game);
+        List<User> instituciones = userService.getInstitutions();
+        for(User u: instituciones){
+            AssociationInstitutionGame asociacion = new AssociationInstitutionGame();
+            asociacion.setInstitution(u);
+            asociacion.setGame(game);
+            associationInstitutionGameService.save(asociacion);
+        }
+        return "redirect:/home";
+    }
 
 }

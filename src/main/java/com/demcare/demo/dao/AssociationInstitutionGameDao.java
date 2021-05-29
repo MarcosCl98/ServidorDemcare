@@ -13,4 +13,5 @@ import java.util.List;
 public interface AssociationInstitutionGameDao extends CrudRepository<AssociationInstitutionGame, Long>, JpaSpecificationExecutor<AssociationInstitutionGame> {
     List<AssociationInstitutionGame> findByInstitution(User user);
     void deleteById(Long id);
+    AssociationInstitutionGame save(AssociationInstitutionGameDao asociacion);
 }

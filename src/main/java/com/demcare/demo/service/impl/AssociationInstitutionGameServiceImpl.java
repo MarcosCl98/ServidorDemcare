@@ -55,4 +55,9 @@ public class AssociationInstitutionGameServiceImpl implements AssociationInstitu
         asociation.get().setDesactivate(false);
         associationInstitutionGameDao.save(asociation.get());
     }
+
+    @Override
+    public AssociationInstitutionGame save(AssociationInstitutionGame asociacion) {
+        return associationInstitutionGameDao.save(asociacion);
+    }
 }

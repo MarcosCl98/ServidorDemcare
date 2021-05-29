@@ -71,6 +71,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li sec:authorize="hasRole('ADMIN')"><a href="/admin/listgames"  th:text="#{nav.listgames}">Ver juegos</a></li>
+                    <li sec:authorize="hasRole('ADMIN')"><a href="/admin/addgame"  th:text="#{nav.addgame}">Agregar juego</a></li>
 
                 </ul>
             </li>

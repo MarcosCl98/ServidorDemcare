@@ -1,5 +1,6 @@
 package com.demcare.demo.service;
 
+import com.demcare.demo.dao.AssociationInstitutionGameDao;
 import com.demcare.demo.entities.Game;
 import com.demcare.demo.entities.AssociationInstitutionGame;
 import com.demcare.demo.entities.User;
@@ -14,5 +15,6 @@ public interface AssociationInstitutionGameService {
     void deleteById(Long id);
     void suspend(Long id);
     void activate(Long id);
+    AssociationInstitutionGame save(AssociationInstitutionGame asociacion);
 
 }
