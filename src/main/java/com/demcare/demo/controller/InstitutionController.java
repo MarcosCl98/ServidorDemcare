@@ -1,7 +1,10 @@
 package com.demcare.demo.controller;
 
 
+import com.demcare.demo.entities.AssociationInstitutionGame;
+import com.demcare.demo.entities.Game;
 import com.demcare.demo.entities.User;
+import com.demcare.demo.models.GameModel;
 import com.demcare.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -20,6 +24,9 @@ public class InstitutionController extends DemcareController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AssociationInstitutionGameService associationInstitutionGameService;
 
     @RequestMapping("/institution/list")
     public String getInstitutionList(Model model){
@@ -110,6 +117,57 @@ public class InstitutionController extends DemcareController {
         User user = userService.findByMail(username);
         userService.acceptSolicitude(user.getId(),id);
         return "redirect:/institution/listSolicitudes";
+    }
+
+    @RequestMapping("/institution/listgames")
+    public String getListGames(Model model){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        List<AssociationInstitutionGame> list = associationInstitutionGameService.findByInstitution(user);
+        List<GameModel> games = new ArrayList<>();
+        for(AssociationInstitutionGame a: list){
+            GameModel game = new GameModel();
+            game.setDescripcion(a.getGame().getDescripcion());
+            game.setId(a.getId());
+            game.setTitulo(a.getGame().getTitulo());
+            game.setDesactivate(a.getDesactive());
+            games.add(game);
+        }
+        model.addAttribute("gameList", games );
+        model.addAttribute("user", user.getId() );
+        return "/institution/listgames";
+    }
+
+    @RequestMapping("/institution/suspend/{id}" )
+    public String suspend(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        List<AssociationInstitutionGame> list = associationInstitutionGameService.findByInstitution(user);
+        for(AssociationInstitutionGame a: list){
+            if(a.getId() == id){
+                associationInstitutionGameService.suspend(id);
+            }
+        }
+        return "redirect:/institution/listgames";
+    }
+
+    @RequestMapping("/institution/activate/{id}" )
+    public String activate(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByMail(username);
+        List<AssociationInstitutionGame> list = associationInstitutionGameService.findByInstitution(user);
+        for(AssociationInstitutionGame a: list){
+            if(a.getId() == id){
+                associationInstitutionGameService.activate(id);
+            }
+        }
+        return "redirect:/institution/listgames";
     }
 
 }

@@ -90,7 +90,7 @@
                     Gestión de Juegos <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/user/add"  th:text="#{nav.selectgame}">Seleccionar juegos</a></li>
+                    <li sec:authorize="hasRole('INSTITUCION')"><a href="/institution/listgames"  th:text="#{nav.selectgame}">Seleccionar juegos</a></li>
 
                 </ul>
             </li>

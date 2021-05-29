@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AssociationInstitutionGameServiceImpl implements AssociationInstitutionGameService {
@@ -39,5 +40,19 @@ public class AssociationInstitutionGameServiceImpl implements AssociationInstitu
     @Override
     public void deleteById(Long id) {
         associationInstitutionGameDao.deleteById(id);
+    }
+
+    @Override
+    public void suspend(Long id) {
+        Optional<AssociationInstitutionGame> asociation = associationInstitutionGameDao.findById(id);
+        asociation.get().setDesactivate(true);
+        associationInstitutionGameDao.save(asociation.get());
+    }
+
+    @Override
+    public void activate(Long id) {
+        Optional<AssociationInstitutionGame> asociation = associationInstitutionGameDao.findById(id);
+        asociation.get().setDesactivate(false);
+        associationInstitutionGameDao.save(asociation.get());
     }
 }

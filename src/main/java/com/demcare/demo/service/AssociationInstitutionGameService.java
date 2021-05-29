@@ -12,5 +12,7 @@ public interface AssociationInstitutionGameService {
     List<Game> findByInstitutionId(Long id);
     List<AssociationInstitutionGame> findByInstitution(User user);
     void deleteById(Long id);
+    void suspend(Long id);
+    void activate(Long id);
 
 }
