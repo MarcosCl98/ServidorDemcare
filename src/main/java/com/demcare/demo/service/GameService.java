@@ -8,6 +8,7 @@ import java.util.List;
 @Service
 public interface GameService {
     Game findByTitulo(String titulo);
+    Game findById(Long id);
     List<Game> findAll();
     List<Game> findActiveGames(Long idJugador);
     Game save(Game game);

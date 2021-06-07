@@ -40,7 +40,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void desactivate(Long id) {
-        Optional<Game> game = gameDao.findById(id);
+        Optional<Game> game= gameDao.findById(id);
         //game.get().setDesactive(true);
         gameDao.save(game.get());
     }
@@ -48,6 +48,11 @@ public class GameServiceImpl implements GameService {
     @Override
     public Game findByTitulo(String titulo) {
         return gameDao.findByTitulo(titulo);
+    }
+
+    @Override
+    public Game findById(Long id) {
+        return gameDao.findById(id).get();
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
+@CrossOrigin(origins = "*")
 public class UserController extends DemcareController {
 
     @Autowired
