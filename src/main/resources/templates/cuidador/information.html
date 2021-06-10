@@ -125,9 +125,9 @@
                 data.addColumn('string', parts[0] + " " + parts[1] + "(sec)");
                 data.addColumn('number', parts[0] + " " + parts[1] + "(sec)");
                 let rows = [];
-                for (i = 2; i < parts.length; i++) {
+                for (i = 3; i < parts.length; i++) {
                     //data.addRow(['Mushrooms', 3]);
-                    data.addRow([String(i) +" try", parseInt(parts[i])]);
+                    data.addRow([String(i-2) +" try", parseInt(parts[i])]);
                 }
 
                 // Set chart options
@@ -141,8 +141,6 @@
                     }
                 };
 
-                // Instantiate and draw our chart, passing in some options.
-                var prueba = 'linechart_material'+index;
                 var chart = new google.charts.Line(document.getElementById('linechart_material'+index));
                 chart.draw(data, google.charts.Line.convertOptions(options));
             }
