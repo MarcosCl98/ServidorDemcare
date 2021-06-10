@@ -25,49 +25,89 @@
 </div>
 <script  th:inline="javascript" type="text/javascript">
     var theList = [[${listaConDatos}]]
-    function createDiv(i) {
-        var div = document.createElement('div')
-        div.id = "linechart_material" + i
-        div.className = "container";
-        document.body.appendChild(div);
-        var p = document.createElement('p')
-        document.body.appendChild(p);
+
+
+    function createTable(index){
+        var tabla   = document.createElement("table");
+        var tblBody = document.createElement("tbody");
+
+        var hilera = document.createElement("tr");
+        for (var iFirstRow = 0; iFirstRow < 3; iFirstRow++) {
+            var celda = document.createElement("th");
+            if(iFirstRow==0){
+                var textoCelda = document.createTextNode("Media");
+            }else if(iFirstRow==1){
+                var textoCelda = document.createTextNode("Máximo");
+            }else if(iFirstRow==2){
+                var textoCelda = document.createTextNode("Mínimo");
+            }
+            celda.appendChild(textoCelda);
+            hilera.appendChild(celda);
+        }
+        tblBody.appendChild(hilera);
+
+
+        let parts = theList[index].split('-');
+        var array = new Array();
+        var sumaMedia = 0;
+        for (var iarray = 3; iarray < parts.length; iarray++) {
+            array.push(parseInt(parts[iarray]));
+            sumaMedia+=parseInt(parts[iarray]);
+        }
+        var media = sumaMedia / (parts.length-1)
+        var max = Math.max.apply(Math, array);
+        var min = Math.min.apply(Math, array);
+
+        var hileraDatos = document.createElement("tr");
+        for (var j = 0; j < 3; j++) {
+            var celdaTd = document.createElement("td");
+            if(j==0){
+                var textoCeldaTd = document.createTextNode(String(media));
+            }else if(j==1){
+                var textoCeldaTd = document.createTextNode(String(max));
+            }else if(j==2){
+                var textoCeldaTd = document.createTextNode(String(min));
+            }
+            celdaTd.appendChild(textoCeldaTd);
+            hileraDatos.appendChild(celdaTd);
+
+        }
+        tblBody.appendChild(hileraDatos);
+        tabla.appendChild(tblBody);
+        document.body.appendChild(tabla);
+        tabla.setAttribute("border", "3");
     }
 
-    function createPrimerDiv(i) {
+    function createDiv(i) {
         var p = document.createElement('p')
         p.id = i
         document.body.appendChild(p);
+
         var div = document.createElement('div')
         div.id = "linechart_material" + i
         div.className = "container";
         document.body.appendChild(div);
+
         var p = document.createElement('p')
         document.body.appendChild(p);
+        createTable(i);
     }
 
-    var primeraVez = true;
     var creadoUnGraph = false;
     for (i = 0; i < theList.length; i++) {
         let parts = theList[i].substring(13).split('-');
-        if(parts.length > 2 && primeraVez) {
-            primeraVez = false;
-            creadoUnGraph = true;
-            createPrimerDiv(i);
-        }else if(parts.length > 2){
-            creadoUnGraph = true;
+        if(parts.length > 2 ) {
             createDiv(i);
         }
     }
 
-    if(!creadoUnGraph){
+  /*  if(!creadoUnGraph){
         var h3 = document.createElement('h3')
         h3.textContent = 'No hay gráficos'
         document.body.appendChild(h3);
-    }
-
-
+    }*/
 </script>
+
 <script  th:inline="javascript" type="text/javascript">
     var theList = [[${listaConDatos}]]
     google.charts.load('current', {'packages':['line']});
@@ -82,22 +122,25 @@
                 data.addColumn('string', parts[0] + " " + parts[1] + "(sec)");
                 data.addColumn('number', parts[0] + " " + parts[1] + "(sec)");
                 let rows = [];
-                for (i = 1; i < parts.length; i++) {
+                for (i = 2; i < parts.length; i++) {
                     //data.addRow(['Mushrooms', 3]);
                     data.addRow([String(i) +" try", parseInt(parts[i])]);
                 }
 
                 // Set chart options
                 var options = {
-                    'title': parts[2],
+                    'title': parts[2] + " info",
                     'width': 400,
-                    'height': 300
+                    'height': 300,
+                    titleTextStyle: {
+                        fontSize: 24,
+                        bold: true
+                    }
                 };
 
                 // Instantiate and draw our chart, passing in some options.
                 var prueba = 'linechart_material'+index;
                 var chart = new google.charts.Line(document.getElementById('linechart_material'+index));
-
                 chart.draw(data, google.charts.Line.convertOptions(options));
             }
 
