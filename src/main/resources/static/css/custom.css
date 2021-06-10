@@ -21,4 +21,8 @@ footer {
   line-height:60px
 }
 
+div{
+  margin:0px auto;
+}
+
 /* Sticky footer styles-------------------------------------------------- */

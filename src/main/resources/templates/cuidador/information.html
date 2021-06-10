@@ -32,13 +32,38 @@
         document.body.appendChild(div);
         var p = document.createElement('p')
         document.body.appendChild(p);
+    }
+
+    function createPrimerDiv(i) {
+        var p = document.createElement('p')
+        p.id = i
+        document.body.appendChild(p);
+        var div = document.createElement('div')
+        div.id = "linechart_material" + i
+        div.className = "container";
+        document.body.appendChild(div);
+        var p = document.createElement('p')
         document.body.appendChild(p);
     }
+
+    var primeraVez = true;
+    var creadoUnGraph = false;
     for (i = 0; i < theList.length; i++) {
         let parts = theList[i].substring(13).split('-');
-        if(parts.length > 2) {
+        if(parts.length > 2 && primeraVez) {
+            primeraVez = false;
+            creadoUnGraph = true;
+            createPrimerDiv(i);
+        }else if(parts.length > 2){
+            creadoUnGraph = true;
             createDiv(i);
         }
+    }
+
+    if(!creadoUnGraph){
+        var h3 = document.createElement('h3')
+        h3.textContent = 'No hay gráficos'
+        document.body.appendChild(h3);
     }
 
 
@@ -52,10 +77,10 @@
         for (index = 0; index < theList.length; index++) {
             var data = new google.visualization.DataTable();
             console.log(index);
-            let parts = theList[index].substring(13).split('-');
+            let parts = theList[index].split('-');
             if(parts.length > 2) {
-                data.addColumn('string', theList[index].substring(0,6) + " " + theList[index].substring(6,13) + "(sec)");
-                data.addColumn('number', theList[index].substring(0,6) + " " + theList[index].substring(6,13) + "(sec)");
+                data.addColumn('string', parts[0] + " " + parts[1] + "(sec)");
+                data.addColumn('number', parts[0] + " " + parts[1] + "(sec)");
                 let rows = [];
                 for (i = 1; i < parts.length; i++) {
                     //data.addRow(['Mushrooms', 3]);
@@ -64,7 +89,7 @@
 
                 // Set chart options
                 var options = {
-                    'title': theList[index].substring(13,20),
+                    'title': parts[2],
                     'width': 400,
                     'height': 300
                 };

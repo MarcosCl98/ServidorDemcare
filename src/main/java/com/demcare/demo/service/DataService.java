@@ -11,5 +11,6 @@ import java.util.List;
 public interface DataService {
     Data save(Data data);
     List<Data> findByUser(User user);
+    List<Data> findByUserAndGame(User user, Game game);
 
 }

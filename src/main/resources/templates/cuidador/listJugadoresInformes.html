@@ -2,7 +2,14 @@
 <html lang="en">
 <head th:replace="fragments/head"/>
 <body>
-
+<script  th:inline="javascript" type="text/javascript">
+    function addGame(i) {
+        var combo = document.getElementById('combo'+i);
+        var boton = document.getElementById('button'+i);
+        var value = combo.value;
+        boton.href = '/cuidador/information/' + i+ '/' + value;
+    }
+</script>
 <!-- Barra de Navegación superior -->
 <head th:replace="fragments/nav"/>
 
@@ -17,6 +24,7 @@
             <th th:text="#{user.surname}">Apellidos</th>
             <th th:text="#{user.mail}">Email</th>
             <th class="col-md-1"> </th>
+            <th class="col-md-1"> </th>
         </tr>
         </thead>
         <tbody>
@@ -25,9 +33,16 @@
             <td th:text="${jugadoresAsocidados.surname}"></td>
             <td th:text="${jugadoresAsocidados.mail}"></td>
             <td>
-                <a th:href="${'/cuidador/information/' + jugadoresAsocidados.id}" >ver informes</a>
+                <a th:id="${'button'+jugadoresAsocidados.id}" th:onclick="'javascript:addGame(\''+ ${jugadoresAsocidados.id} +'\');'"> ver informes</a>
             </td>
-
+            <td>
+                <select th:id="${'combo'+jugadoresAsocidados.id}">
+                    <option th:each="juego : ${juegos}"
+                            th:value="${juego}"
+                            th:text="${juego}">
+                    </option>
+                </select>
+            </td>
         </tr>
         </tbody>
     </table>

@@ -49,6 +49,9 @@ public class CarerController extends DemcareController {
     @Autowired
     private DataService dataService;
 
+    @Autowired
+    private GameService gameService;
+
 
     @RequestMapping("/cuidador/list")
     public String getCuidadorList(Model model){
@@ -275,13 +278,21 @@ public class CarerController extends DemcareController {
         User cuidador = userService.findByMail(username);
 
         List<User> jugadoresAsocidados = userService.getAssociatedUsersToCarer(cuidador);
+        List<Game> juegos = gameService.findAll();
+        List<String> juegosString = new ArrayList<>();
+        for(Game game: juegos){
+            juegosString.add(game.getTitulo());
+        }
         model.addAttribute("jugadoresAsocidados", jugadoresAsocidados);
+        model.addAttribute("juegos",juegosString);
         return "/cuidador/listJugadoresInformes";
     }
 
-    @RequestMapping("/cuidador/information/{id}" )
-    public String userInformation(Model model,@PathVariable Long id, HttpServletRequest request){
+    @RequestMapping("/cuidador/information/{id}/{gameString}" )
+    public String userInformation(Model model,@PathVariable Long id, @PathVariable String gameString, HttpServletRequest request){
         User user = userService.findById(id);
+        Game game = gameService.findByTitulo(gameString);
+        request.getSession().setAttribute("game",game);
         request.getSession().setAttribute("paciente",user);
         return "redirect:/cuidador/information";
     }
@@ -289,7 +300,8 @@ public class CarerController extends DemcareController {
     @RequestMapping("/cuidador/information" )
     public String userInformationGraph(Model model, HttpServletRequest request){
         User paciente = (User) request.getSession().getAttribute("paciente");
-        List<Data> dataList =  dataService.findByUser(paciente);
+        Game game = (Game) request.getSession().getAttribute("game");
+        List<Data> dataList =  dataService.findByUserAndGame(paciente,game);
 
         Map<String, List<Data>> mapGames = new HashMap<String, List<Data>>();
         for(Data data: dataList){
@@ -314,7 +326,7 @@ public class CarerController extends DemcareController {
                 listaTiempos.add(Double.parseDouble(d.getTime_opened()));
                 //añadir clicks
             }
-            mapGraph.put("tiempoabierto" + data.getKey(),listaTiempos);
+            mapGraph.put("tiempo-abierto" + "-" +data.getKey(),listaTiempos);
             //aádimos el resto de listas
         }
 
@@ -335,21 +347,6 @@ public class CarerController extends DemcareController {
             listaConDatos.add(dato);
         }
         model.addAttribute("listaConDatos", listaConDatos);
-
-        //CONVERTIR A JSON
-        /*List<JSONObject> jsonDataList = new ArrayList<>();
-        for (Iterator<Map.Entry<String, List<Data>>> entries = mapGames.entrySet().iterator(); entries.hasNext(); ) {
-            Map.Entry<String, List<Data>> data = entries.next();
-            List<Data> listDatos = data.getValue();
-            List<Double> listaTiempos = new ArrayList(); // Esto lo hago para el caso del tiempo, no hace falta que se flexible, al fin y al cabo la idea es que todos los juegos registren lo mismo, asiq si hace falta hago 20 bucles
-            for(Data d: listDatos){
-                listaTiempos.add(Double.parseDouble(d.getTime_opened()));
-            }
-            JSONObject json = new JSONObject();
-            json.put("times", listaTiempos);
-            jsonDataList.add(json);
-        }
-        model.addAttribute("jsonDatos", jsonDataList);*/
         return "/cuidador/information.html";
     }
 }

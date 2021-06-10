@@ -27,5 +27,18 @@ public class DataServiceImpl implements DataService {
         return dataDao.findByUser(user);
     }
 
+    @Override
+    public List<Data> findByUserAndGame(User user, Game game) {
+        List<Data> dataByUser = dataDao.findByUser(user);
+        List<Data> finalList = new ArrayList<>();
+
+        for(Data data: dataByUser){
+            if(data.getGame().getId() == game.getId()){
+                finalList.add(data);
+            }
+        }
+        return finalList;
+    }
+
 
 }
