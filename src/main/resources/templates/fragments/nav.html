@@ -29,7 +29,7 @@
                     Gestión de Usuarios <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/user/add"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
+                    <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/listJugadoresInformes"  th:text="#{nav.adminreports}">Acceder a informes</a></li>
                     <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/add"  th:text="#{nav.register}">Registrar pacientes</a></li>
                     <li sec:authorize="hasRole('CUIDADOR')"><a href="/cuidador/listCuidadores"  th:text="#{nav.share}">Compartir pacientes</a></li>
                 </ul>

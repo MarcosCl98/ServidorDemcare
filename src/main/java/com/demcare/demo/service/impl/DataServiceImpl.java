@@ -22,5 +22,10 @@ public class DataServiceImpl implements DataService {
         return dataDao.save(data);
     }
 
+    @Override
+    public List<Data> findByUser(User user) {
+        return dataDao.findByUser(user);
+    }
+
 
 }

@@ -1,17 +1,18 @@
 package com.demcare.demo.controller;
 
 import com.demcare.demo.entities.*;
+import com.demcare.demo.models.CharDataModel;
 import com.demcare.demo.models.UserModel;
 import com.demcare.demo.service.*;
 import com.demcare.demo.util.FileUploadUtil;
 import com.demcare.demo.util.SecureTokenGenerator;
-import com.demcare.demo.validators.SingUpFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -46,7 +47,7 @@ public class CarerController extends DemcareController {
     private RolesService rolesService;
 
     @Autowired
-    private SingUpFormValidator signUpFormValidator;
+    private DataService dataService;
 
 
     @RequestMapping("/cuidador/list")
@@ -265,4 +266,90 @@ public class CarerController extends DemcareController {
         return "/cuidador/download";
     }
 
+    @RequestMapping("/cuidador/listJugadoresInformes" )
+    public String getJugadoresListInformes(Model model, HttpServletRequest request){
+
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User cuidador = userService.findByMail(username);
+
+        List<User> jugadoresAsocidados = userService.getAssociatedUsersToCarer(cuidador);
+        model.addAttribute("jugadoresAsocidados", jugadoresAsocidados);
+        return "/cuidador/listJugadoresInformes";
+    }
+
+    @RequestMapping("/cuidador/information/{id}" )
+    public String userInformation(Model model,@PathVariable Long id, HttpServletRequest request){
+        User user = userService.findById(id);
+        request.getSession().setAttribute("paciente",user);
+        return "redirect:/cuidador/information";
+    }
+
+    @RequestMapping("/cuidador/information" )
+    public String userInformationGraph(Model model, HttpServletRequest request){
+        User paciente = (User) request.getSession().getAttribute("paciente");
+        List<Data> dataList =  dataService.findByUser(paciente);
+
+        Map<String, List<Data>> mapGames = new HashMap<String, List<Data>>();
+        for(Data data: dataList){
+            if(mapGames.containsKey(data.getScene())){
+                List<Data> listExistente = mapGames.get(data.getScene());
+                listExistente.add(data);
+            }else{
+                List<Data> newList = new ArrayList<>();
+                newList.add(data);
+                mapGames.put(data.getScene(),newList);
+            }
+
+        }
+
+        Map<String, List<Double>> mapGraph = new HashMap<String, List<Double>>();
+        for (Iterator<Map.Entry<String, List<Data>>> entries = mapGames.entrySet().iterator(); entries.hasNext(); ) {
+            Map.Entry<String, List<Data>> data = entries.next();
+            List<Data> listDatos = data.getValue();
+            List<Double> listaTiempos = new ArrayList();
+            //crear lista para cada dato
+            for(Data d: listDatos){
+                listaTiempos.add(Double.parseDouble(d.getTime_opened()));
+                //añadir clicks
+            }
+            mapGraph.put("tiempoabierto" + data.getKey(),listaTiempos);
+            //aádimos el resto de listas
+        }
+
+        List<String> listaConDatos = new ArrayList();
+        for (Iterator<Map.Entry<String, List<Double>>> entries = mapGraph.entrySet().iterator(); entries.hasNext(); ) {
+            Map.Entry<String, List<Double>> data = entries.next();
+            String numeros = "";
+            int counter = 0;
+            for(Double num: data.getValue()){
+                if(counter == 0){
+                    counter++;
+                    numeros += String.valueOf(Math.round(num));
+                }else{
+                    numeros += '-' + String.valueOf(Math.round(num));
+                }
+            }
+            String dato = data.getKey()+ '-' +numeros;
+            listaConDatos.add(dato);
+        }
+        model.addAttribute("listaConDatos", listaConDatos);
+
+        //CONVERTIR A JSON
+        /*List<JSONObject> jsonDataList = new ArrayList<>();
+        for (Iterator<Map.Entry<String, List<Data>>> entries = mapGames.entrySet().iterator(); entries.hasNext(); ) {
+            Map.Entry<String, List<Data>> data = entries.next();
+            List<Data> listDatos = data.getValue();
+            List<Double> listaTiempos = new ArrayList(); // Esto lo hago para el caso del tiempo, no hace falta que se flexible, al fin y al cabo la idea es que todos los juegos registren lo mismo, asiq si hace falta hago 20 bucles
+            for(Data d: listDatos){
+                listaTiempos.add(Double.parseDouble(d.getTime_opened()));
+            }
+            JSONObject json = new JSONObject();
+            json.put("times", listaTiempos);
+            jsonDataList.add(json);
+        }
+        model.addAttribute("jsonDatos", jsonDataList);*/
+        return "/cuidador/information.html";
+    }
 }

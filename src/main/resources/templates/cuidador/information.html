@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js">
+    </script>
+    <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+    </script>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/custom.css" />
+    <script src="/script/languages.js"> </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+</head>
+<body>
+<!-- Barra de Navegación superior -->
+<head th:replace="fragments/nav"/>
+<div class="container">
+    <h2>Informe del usuario</h2>
+</div>
+<script  th:inline="javascript" type="text/javascript">
+    var theList = [[${listaConDatos}]]
+    function createDiv(i) {
+        var div = document.createElement('div')
+        div.id = "linechart_material" + i
+        div.className = "container";
+        document.body.appendChild(div);
+        var p = document.createElement('p')
+        document.body.appendChild(p);
+        document.body.appendChild(p);
+    }
+    for (i = 0; i < theList.length; i++) {
+        let parts = theList[i].substring(13).split('-');
+        if(parts.length > 2) {
+            createDiv(i);
+        }
+    }
+
+
+</script>
+<script  th:inline="javascript" type="text/javascript">
+    var theList = [[${listaConDatos}]]
+    google.charts.load('current', {'packages':['line']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        for (index = 0; index < theList.length; index++) {
+            var data = new google.visualization.DataTable();
+            console.log(index);
+            let parts = theList[index].substring(13).split('-');
+            if(parts.length > 2) {
+                data.addColumn('string', theList[index].substring(0,6) + " " + theList[index].substring(6,13) + "(sec)");
+                data.addColumn('number', theList[index].substring(0,6) + " " + theList[index].substring(6,13) + "(sec)");
+                let rows = [];
+                for (i = 1; i < parts.length; i++) {
+                    //data.addRow(['Mushrooms', 3]);
+                    data.addRow([String(i) +" try", parseInt(parts[i])]);
+                }
+
+                // Set chart options
+                var options = {
+                    'title': theList[index].substring(13,20),
+                    'width': 400,
+                    'height': 300
+                };
+
+                // Instantiate and draw our chart, passing in some options.
+                var prueba = 'linechart_material'+index;
+                var chart = new google.charts.Line(document.getElementById('linechart_material'+index));
+
+                chart.draw(data, google.charts.Line.convertOptions(options));
+            }
+
+        }
+    }
+</script>
+
+
+<footer th:replace="fragments/footer"/>
+</body>
+</html>

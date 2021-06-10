@@ -542,4 +542,14 @@ public class UserServiceImpl implements UserService {
         return finalList;
     }
 
+    @Override
+    public List<User> getAssociatedUsersToCarer(User cuidador) {
+        List<AssociationCarerPlayer> jugadoresAsociadosCuidador = associationCarerPlayerDao.findByCarerUser(cuidador);
+        List <User> finalList = new ArrayList<User>();
+        for(AssociationCarerPlayer a: jugadoresAsociadosCuidador){
+            finalList.add(a.getPlayerUser());
+        }
+        return finalList;
+    }
+
 }
