@@ -20,8 +20,8 @@
 <body>
 <!-- Barra de Navegación superior -->
 <head th:replace="fragments/nav"/>
-<div class="container">
-    <h2>Informe del usuario</h2>
+<div id="prueba" class="container">
+    <h2 id="informe">Informe del usuario</h2>
 </div>
 <script  th:inline="javascript" type="text/javascript">
     var theList = [[${listaConDatos}]]
@@ -97,15 +97,18 @@
     for (i = 0; i < theList.length; i++) {
         let parts = theList[i].substring(13).split('-');
         if(parts.length > 2 ) {
+            creadoUnGraph = true;
             createDiv(i);
         }
     }
 
-  /*  if(!creadoUnGraph){
+    if(!creadoUnGraph){
         var h3 = document.createElement('h3')
-        h3.textContent = 'No hay gráficos'
-        document.body.appendChild(h3);
-    }*/
+        h3.textContent = 'No data has been recorded yet'
+        var elem = document.getElementById("informe");
+        elem.parentNode.removeChild(elem);
+        document.getElementById("prueba").appendChild(h3);
+    }
 </script>
 
 <script  th:inline="javascript" type="text/javascript">
