@@ -18,7 +18,27 @@ public class DataModel implements Serializable {
     @JsonProperty("timeOpened")
     @Getter
     @Setter
-    private String timeOpened;
+    private double timeOpened;
+
+    @JsonProperty("numberOfClicks")
+    @Getter
+    @Setter
+    private int numberOfClicks;
+
+    @JsonProperty("maxSpeed")
+    @Getter
+    @Setter
+    private double maxSpeed;
+
+    @JsonProperty("maxAceleration")
+    @Getter
+    @Setter
+    private double maxAceleration;
+
+    @JsonProperty("numberOfErrors")
+    @Getter
+    @Setter
+    private int numberOfErrors;
 
     @JsonProperty("urlPlayer")
     @Getter

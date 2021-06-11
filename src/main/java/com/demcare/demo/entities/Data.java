@@ -31,6 +31,22 @@ public class Data implements Serializable {
 
     @Getter
     @Setter
-    private String time_opened;
+    private double time_opened;
+
+    @Getter
+    @Setter
+    private int number_clicks;
+
+    @Getter
+    @Setter
+    private double max_speed;
+
+    @Getter
+    @Setter
+    private double max_acceleration;
+
+    @Getter
+    @Setter
+    private int number_errors;
 
 }

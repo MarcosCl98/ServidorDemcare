@@ -323,7 +323,7 @@ public class CarerController extends DemcareController {
             List<Double> listaTiempos = new ArrayList();
             //crear lista para cada dato
             for(Data d: listDatos){
-                listaTiempos.add(Double.parseDouble(d.getTime_opened()));
+                listaTiempos.add(d.getTime_opened());
                 //añadir clicks
             }
             mapGraph.put("tiempo abierto" + "-" +data.getKey(),listaTiempos);

@@ -40,8 +40,25 @@ public class DataController extends DemcareController {
         Data data = new Data();
         data.setGame(game);
         data.setScene(dataModel.getScene());
-        data.setTime_opened(dataModel.getTimeOpened());
         data.setUser(user);
+
+        if(dataModel.getTimeOpened()>0){
+            data.setTime_opened(dataModel.getTimeOpened());
+        }
+
+        if(dataModel.getNumberOfClicks()>0){
+            data.setNumber_clicks(dataModel.getNumberOfClicks());
+        }
+        if(dataModel.getMaxSpeed()>0){
+            data.setMax_speed(dataModel.getMaxSpeed());
+        }
+        if(dataModel.getMaxAceleration()>0){
+            data.setMax_acceleration(dataModel.getMaxAceleration());
+        }
+        if(dataModel.getNumberOfErrors()>0){
+            data.setNumber_errors(dataModel.getNumberOfErrors());
+        }
+
 
         dataService.save(data);
         return "/home";
