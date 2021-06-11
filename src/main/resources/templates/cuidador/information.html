@@ -26,7 +26,6 @@
 <script  th:inline="javascript" type="text/javascript">
     var theList = [[${listaConDatos}]]
 
-
     function createTable(index){
         var tabla   = document.createElement("table");
         var tblBody = document.createElement("tbody");
@@ -35,11 +34,11 @@
         for (var iFirstRow = 0; iFirstRow < 3; iFirstRow++) {
             var celda = document.createElement("th");
             if(iFirstRow==0){
-                var textoCelda = document.createTextNode("Media");
+                var textoCelda = document.createTextNode("Average");
             }else if(iFirstRow==1){
-                var textoCelda = document.createTextNode("Máximo");
+                var textoCelda = document.createTextNode("Max");
             }else if(iFirstRow==2){
-                var textoCelda = document.createTextNode("Mínimo");
+                var textoCelda = document.createTextNode("Min");
             }
             celda.appendChild(textoCelda);
             hilera.appendChild(celda);
@@ -122,8 +121,8 @@
             console.log(index);
             let parts = theList[index].split('-');
             if(parts.length > 2) {
-                data.addColumn('string', parts[0] + " " + parts[1] + "(sec)");
-                data.addColumn('number', parts[0] + " " + parts[1] + "(sec)");
+                data.addColumn('string', parts[0] + " " + "(sec)");
+                data.addColumn('number', parts[0] + " " + "(sec)");
                 let rows = [];
                 for (i = 3; i < parts.length; i++) {
                     //data.addRow(['Mushrooms', 3]);
@@ -132,7 +131,7 @@
 
                 // Set chart options
                 var options = {
-                    'title': parts[2] + " info",
+                    'title': parts[1] + " info",
                     'width': 400,
                     'height': 300,
                     titleTextStyle: {
