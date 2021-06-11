@@ -326,7 +326,7 @@ public class CarerController extends DemcareController {
                 listaTiempos.add(Double.parseDouble(d.getTime_opened()));
                 //añadir clicks
             }
-            mapGraph.put("tiempo-abierto" + "-" +data.getKey(),listaTiempos);
+            mapGraph.put("tiempo abierto" + "-" +data.getKey(),listaTiempos);
             //aádimos el resto de listas
         }
 

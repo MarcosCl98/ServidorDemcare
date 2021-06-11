@@ -111,7 +111,7 @@
     }
 </script>
 
-<script  th:inline="javascript" type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
     var theList = [[${listaConDatos}]]
     google.charts.load('current', {'packages':['line']});
     google.charts.setOnLoadCallback(drawChart);
@@ -148,8 +148,49 @@
         }
     }
 </script>
+<script th:inline="javascript" type="text/javascript">
+    var theList = [[${listaConDatos}]]
+    var csvFileData = [];
+    var nameGames = [];
 
+    for (icsv = 0; icsv < theList.length; icsv++) {
+        let data = theList[icsv].split('-');
+        var dataRecorded = data[0];
+        let parts = theList[icsv].split('-');
+        var csvRow = [];
+        for(iparts=1; iparts < parts.length; iparts++){
+            if(iparts==1){
+                nameGames.push(parts[iparts]+";");
+            }else{
+                csvRow.push(parts[iparts]);
+            }
+        }
+        csvFileData.push(csvRow);
 
+    }
+
+    function download_csv_file() {
+        var csv = 'Game'+';'+ dataRecorded +'\n';
+
+        var counter = 0;
+        csvFileData.forEach(function(row) {
+            csv += nameGames[counter];
+            csv += row.join(',');
+            csv += "\n";
+            counter++;
+        });
+
+        var hiddenElement = document.createElement('a');
+        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+        hiddenElement.download = 'info.csv';
+        hiddenElement.click();
+    }
+</script>
+<style type="text/css">
+    body { text-align:center; }
+</style>
+<button onclick="download_csv_file()"> Download CSV </button>
+<p style="background-color:white"></p>
 <footer th:replace="fragments/footer"/>
 </body>
 </html>
