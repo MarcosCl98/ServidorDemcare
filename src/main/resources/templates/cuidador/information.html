@@ -27,54 +27,58 @@
     var theList = [[${listaConDatos}]]
 
     function createTable(index){
-        var tabla   = document.createElement("table");
-        var tblBody = document.createElement("tbody");
+        let parts2 = theList[index].split('-');
+        if(parts2.length > 3 ) {
+            var tabla   = document.createElement("table");
+            var tblBody = document.createElement("tbody");
 
-        var hilera = document.createElement("tr");
-        for (var iFirstRow = 0; iFirstRow < 3; iFirstRow++) {
-            var celda = document.createElement("th");
-            if(iFirstRow==0){
-                var textoCelda = document.createTextNode("Average");
-            }else if(iFirstRow==1){
-                var textoCelda = document.createTextNode("Max");
-            }else if(iFirstRow==2){
-                var textoCelda = document.createTextNode("Min");
+            var hilera = document.createElement("tr");
+            for (var iFirstRow = 0; iFirstRow < 3; iFirstRow++) {
+                var celda = document.createElement("th");
+                if(iFirstRow==0){
+                    var textoCelda = document.createTextNode("Average");
+                }else if(iFirstRow==1){
+                    var textoCelda = document.createTextNode("Max");
+                }else if(iFirstRow==2){
+                    var textoCelda = document.createTextNode("Min");
+                }
+                celda.appendChild(textoCelda);
+                hilera.appendChild(celda);
             }
-            celda.appendChild(textoCelda);
-            hilera.appendChild(celda);
-        }
-        tblBody.appendChild(hilera);
+            tblBody.appendChild(hilera);
 
 
-        let parts = theList[index].split('-');
-        var array = new Array();
-        var sumaMedia = 0;
-        for (var iarray = 3; iarray < parts.length; iarray++) {
-            array.push(parseInt(parts[iarray]));
-            sumaMedia+=parseInt(parts[iarray]);
-        }
-        var media = sumaMedia / (parts.length-1)
-        var max = Math.max.apply(Math, array);
-        var min = Math.min.apply(Math, array);
-
-        var hileraDatos = document.createElement("tr");
-        for (var j = 0; j < 3; j++) {
-            var celdaTd = document.createElement("td");
-            if(j==0){
-                var textoCeldaTd = document.createTextNode(String(media));
-            }else if(j==1){
-                var textoCeldaTd = document.createTextNode(String(max));
-            }else if(j==2){
-                var textoCeldaTd = document.createTextNode(String(min));
+            let parts = theList[index].split('-');
+            var array = new Array();
+            var sumaMedia = 0;
+            for (var iarray = 2; iarray < parts.length; iarray++) {
+                array.push(parseInt(parts[iarray]));
+                sumaMedia+=parseInt(parts[iarray]);
             }
-            celdaTd.appendChild(textoCeldaTd);
-            hileraDatos.appendChild(celdaTd);
+            var media = sumaMedia / (parts.length-1);
+            media = media.toFixed(2);
+            var max = Math.max.apply(Math, array);
+            var min = Math.min.apply(Math, array);
 
+            var hileraDatos = document.createElement("tr");
+            for (var j = 0; j < 3; j++) {
+                var celdaTd = document.createElement("td");
+                if(j==0){
+                    var textoCeldaTd = document.createTextNode(String(media));
+                }else if(j==1){
+                    var textoCeldaTd = document.createTextNode(String(max));
+                }else if(j==2){
+                    var textoCeldaTd = document.createTextNode(String(min));
+                }
+                celdaTd.appendChild(textoCeldaTd);
+                hileraDatos.appendChild(celdaTd);
+
+            }
+            tblBody.appendChild(hileraDatos);
+            tabla.appendChild(tblBody);
+            document.body.appendChild(tabla);
+            tabla.setAttribute("border", "3");
         }
-        tblBody.appendChild(hileraDatos);
-        tabla.appendChild(tblBody);
-        document.body.appendChild(tabla);
-        tabla.setAttribute("border", "3");
     }
 
     function createDiv(i) {
@@ -94,8 +98,8 @@
 
     var creadoUnGraph = false;
     for (i = 0; i < theList.length; i++) {
-        let parts = theList[i].substring(13).split('-');
-        if(parts.length > 2 ) {
+        let parts = theList[i].split('-');
+        if(parts.length > 3 ) {
             creadoUnGraph = true;
             createDiv(i);
         }
@@ -103,6 +107,7 @@
 
     if(!creadoUnGraph){
         var h3 = document.createElement('h3')
+        h3.id ='sinDatos'
         h3.textContent = 'No data has been recorded yet'
         var elem = document.getElementById("informe");
         elem.parentNode.removeChild(elem);
@@ -121,21 +126,21 @@
             console.log(index);
             let parts = theList[index].split('-');
             if(parts.length > 2) {
-                data.addColumn('string', parts[0] + " " + "(sec)");
-                data.addColumn('number', parts[0] + " " + "(sec)");
+                data.addColumn('string', parts[0] );
+                data.addColumn('number', parts[0] );
                 let rows = [];
-                for (i = 3; i < parts.length; i++) {
+                for (i = 2; i < parts.length; i++) {
                     //data.addRow(['Mushrooms', 3]);
-                    data.addRow([String(i-2) +" try", parseInt(parts[i])]);
+                    data.addRow([String(i-1) +" try", parseInt(parts[i])]);
                 }
 
                 // Set chart options
                 var options = {
-                    'title': parts[1] + " info",
+                    'title': parts[1] + " " + parts[0],
                     'width': 400,
                     'height': 300,
                     titleTextStyle: {
-                        fontSize: 24,
+                        fontSize: 18,
                         bold: true
                     }
                 };
@@ -151,30 +156,30 @@
     var theList = [[${listaConDatos}]]
     var csvFileData = [];
     var nameGames = [];
+    var datasRecorded = [];
 
     for (icsv = 0; icsv < theList.length; icsv++) {
         let data = theList[icsv].split('-');
-        var dataRecorded = data[0];
+        datasRecorded.push(data[0]);
         let parts = theList[icsv].split('-');
         var csvRow = [];
-        for(iparts=1; iparts < parts.length; iparts++){
+        for(iparts=1; iparts < parts.length+1; iparts++){
             if(iparts==1){
-                nameGames.push(parts[iparts]+";");
+                nameGames.push(parts[iparts]+";"+data[0]+";");
             }else{
                 csvRow.push(parts[iparts]);
             }
         }
         csvFileData.push(csvRow);
-
     }
 
     function download_csv_file() {
-        var csv = 'Game'+';'+ dataRecorded +'\n';
+        var  csv ='Game' + '\n';
 
         var counter = 0;
         csvFileData.forEach(function(row) {
             csv += nameGames[counter];
-            csv += row.join(',');
+            csv += row.join(';');
             csv += "\n";
             counter++;
         });
@@ -188,7 +193,14 @@
 <style type="text/css">
     body { text-align:center; }
 </style>
-<button onclick="download_csv_file()"> Download CSV </button>
+<button id="buttoncsv" onclick="download_csv_file()"> Download CSV </button>
+<script th:inline="javascript" type="text/javascript">
+    var elem = document.getElementById("sinDatos");
+    if(elem!=null){
+        var button = document.getElementById('buttoncsv');
+        button.setAttribute("hidden", true);
+    }
+</script>
 <p style="background-color:white"></p>
 <footer th:replace="fragments/footer"/>
 </body>

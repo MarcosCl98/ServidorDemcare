@@ -33,7 +33,8 @@ public class DataController extends DemcareController {
     @CrossOrigin(origins = "*")
     @PostMapping(value="/data", produces = MediaType.APPLICATION_JSON_VALUE )
     public String data(@RequestBody DataModel dataModel){
-        String idUser = dataModel.getUrlPlayer().substring(31);
+        String parts[] = dataModel.getUrlPlayer().split("/");
+        String idUser = parts[parts.length-1].substring(1);
         Game game = gameService.findById(dataModel.getGame());
         User user = userService.findById(Long.parseLong(idUser));
 

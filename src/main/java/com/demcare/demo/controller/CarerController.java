@@ -316,36 +316,86 @@ public class CarerController extends DemcareController {
 
         }
 
-        Map<String, List<Double>> mapGraph = new HashMap<String, List<Double>>();
+        Map<String, List> mapGraph = new HashMap<String, List>();
+        for (Iterator<Map.Entry<String, List<Data>>> entries = mapGames.entrySet().iterator(); entries.hasNext(); ) {
+            Map.Entry<String, List<Data>> data = entries.next();
+            List<Data> listDatos = data.getValue();
+            if(listDatos.size() <=1 ){
+                mapGames.remove(data.getKey());
+            }
+        }
+        List<String> listaConDatos = new ArrayList();
         for (Iterator<Map.Entry<String, List<Data>>> entries = mapGames.entrySet().iterator(); entries.hasNext(); ) {
             Map.Entry<String, List<Data>> data = entries.next();
             List<Data> listDatos = data.getValue();
             List<Double> listaTiempos = new ArrayList();
-            //crear lista para cada dato
+            List<Integer> listaClicks = new ArrayList();
+            List<Double> listMaxAcceleration = new ArrayList();
+            List<Double> listaMaxSpeed = new ArrayList();
+            List<Integer> listaNumErrors = new ArrayList();
             for(Data d: listDatos){
                 listaTiempos.add(d.getTime_opened());
-                //añadir clicks
+                listaClicks.add(d.getNumber_clicks());
+                listMaxAcceleration.add(d.getMax_acceleration());
+                listaMaxSpeed.add(d.getMax_speed());
+                listaNumErrors.add(d.getNumber_errors());
             }
-            mapGraph.put("tiempo abierto" + "-" +data.getKey(),listaTiempos);
+
+            String stringTiempos = "time opened-" + data.getKey();
+            for(int i=0; i<listaTiempos.size();i++){
+                stringTiempos+= "-" + listaTiempos.get(i);
+            }
+            listaConDatos.add(stringTiempos);
+
+            String stringClicks = "number of clicks-"+ data.getKey();
+            for(int i=0; i<listaClicks.size();i++){
+                stringClicks+= "-" + listaClicks.get(i);
+            }
+            listaConDatos.add(stringClicks);
+
+            String stringAcc = "max acceleration mouse-"+ data.getKey();
+            for(int i=0; i<listMaxAcceleration.size();i++){
+                stringAcc+= "-" + listMaxAcceleration.get(i);
+            }
+            listaConDatos.add(stringAcc);
+
+            String stringSpeed = "max speed mouse-"+ data.getKey();
+            for(int i=0; i<listaMaxSpeed.size();i++){
+                stringSpeed+= "-" + listaMaxSpeed.get(i);
+            }
+            listaConDatos.add(stringSpeed);
+
+            String stringErrors = "number of errors-" + data.getKey();
+            for(int i=0; i<listaNumErrors.size();i++){
+                stringErrors+= "-" + listaNumErrors.get(i);
+            }
+            listaConDatos.add(stringErrors);
+
+           /* mapGraph.put("time opened" + "-" +data.getKey(),listaTiempos);
+            mapGraph.put("number of clicks" + "-" +data.getKey(),listaClicks);
+            mapGraph.put("max acceleration mouse" + "-" +data.getKey(),listMaxAcceleration);
+            mapGraph.put("max speed mouse" + "-" +data.getKey(),listaMaxSpeed);
+            mapGraph.put("number of errors" + "-" +data.getKey(),listaNumErrors);*/
             //aádimos el resto de listas
         }
 
-        List<String> listaConDatos = new ArrayList();
-        for (Iterator<Map.Entry<String, List<Double>>> entries = mapGraph.entrySet().iterator(); entries.hasNext(); ) {
-            Map.Entry<String, List<Double>> data = entries.next();
+      /*  List<String> listaConDatos = new ArrayList();
+        for (Iterator<Map.Entry<String, List>> entries = mapGraph.entrySet().iterator(); entries.hasNext(); ) {
+            Map.Entry<String, List> data = entries.next();
             String numeros = "";
             int counter = 0;
-            for(Double num: data.getValue()){
+            for(Object num: data.getValue()){
                 if(counter == 0){
                     counter++;
-                    numeros += String.valueOf(Math.round(num));
+                    numeros += String.valueOf(num);
                 }else{
-                    numeros += '-' + String.valueOf(Math.round(num));
+                    numeros += '-' + String.valueOf(num);
                 }
             }
             String dato = data.getKey()+ '-' +numeros;
             listaConDatos.add(dato);
-        }
+        }*/
+
         model.addAttribute("listaConDatos", listaConDatos);
         return "/cuidador/information.html";
     }
