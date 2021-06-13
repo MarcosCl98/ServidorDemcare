@@ -12,13 +12,11 @@ import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers("/css/**", "/img/**", "/script/**","/", "/singup", "/login/**", "/data").permitAll().anyRequest().authenticated().and().formLogin()
-                .loginPage("/login").permitAll().defaultSuccessUrl("/home").and()
+                .antMatchers("/css/**", "/img/**", "/script/**","/", "/singup", "/login/**", "/data","/suspended").permitAll().anyRequest().authenticated().and().formLogin()
+                .loginPage("/login").defaultSuccessUrl("/home").and()
                 .logout()
                 .permitAll();
 

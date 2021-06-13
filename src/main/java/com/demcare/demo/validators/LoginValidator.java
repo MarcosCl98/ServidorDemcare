@@ -9,9 +9,8 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
-public class LoginFormValidator implements Validator {
-    @Autowired
-    private UserService usersService;
+public class LoginValidator implements Validator {
+
     @Override
     public boolean supports(Class<?> aClass) {
         return User.class.equals(aClass);
@@ -19,11 +18,7 @@ public class LoginFormValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        User user = (User) o;
-
-        if (user.isSuspend()) {
-            errors.rejectValue("mail", "Error.login.suspend");
-        }
+        errors.rejectValue("passwordConfirm", "Error.signup.passwordConfirm.coincidence");
     }
 
 
