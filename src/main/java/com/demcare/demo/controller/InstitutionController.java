@@ -2,6 +2,7 @@ package com.demcare.demo.controller;
 
 
 import com.demcare.demo.entities.AssociationInstitutionGame;
+import com.demcare.demo.entities.Data;
 import com.demcare.demo.entities.Game;
 import com.demcare.demo.entities.User;
 import com.demcare.demo.models.GameModel;
@@ -17,8 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -29,6 +29,13 @@ public class InstitutionController extends DemcareController {
 
     @Autowired
     private AssociationInstitutionGameService associationInstitutionGameService;
+
+    @Autowired
+    private DataService dataService;
+
+    @Autowired
+    private GameService gameService;
+
 
     @RequestMapping("/institution/list")
     public String getInstitutionList(Model model){
@@ -170,6 +177,131 @@ public class InstitutionController extends DemcareController {
             }
         }
         return "redirect:/institution/listgames";
+    }
+
+    @RequestMapping("/institution/listinformes" )
+    public String getJugadoresListInformes(Model model, HttpServletRequest request){
+
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User institucion = userService.findByMail(username);
+
+        List<User> cuidadoresAsociados = userService.getAssociateCarers(institucion.getId());
+        List<Game> juegos = gameService.findAll();
+        List<User> jugadoresAsocidados = new ArrayList<>();
+        for(User u: cuidadoresAsociados){
+            List<User> jugadoresAsociadosCuidador = userService.getAssociatedUsersToCarer(u);
+            for(User uc: jugadoresAsociadosCuidador){
+                boolean existe = false;
+                for(User uf: jugadoresAsocidados){
+                    if(uf.getId() == uc.getId()){
+                        existe = true;
+                    }
+                }
+                if(!existe){
+                    jugadoresAsocidados.add(uc);
+                }
+            }
+        }
+
+        List<String> juegosString = new ArrayList<>();
+        for(Game game: juegos){
+            juegosString.add(game.getTitulo());
+        }
+        model.addAttribute("jugadoresAsocidados", jugadoresAsocidados);
+        model.addAttribute("juegos",juegosString);
+        return "/institution/listinformes";
+    }
+
+    @RequestMapping("/institution/information/{id}/{gameString}" )
+    public String userInformation(Model model,@PathVariable Long id, @PathVariable String gameString, HttpServletRequest request){
+        User user = userService.findById(id);
+        Game game = gameService.findByTitulo(gameString);
+        request.getSession().setAttribute("game",game);
+        request.getSession().setAttribute("paciente",user);
+        return "redirect:/institution/informationuser";
+    }
+
+    @RequestMapping("/institution/informationuser" )
+    public String userInformationGraph(Model model, HttpServletRequest request){
+        User paciente = (User) request.getSession().getAttribute("paciente");
+        Game game = (Game) request.getSession().getAttribute("game");
+        List<Data> dataList =  dataService.findByUserAndGame(paciente,game);
+
+        Map<String, List<Data>> mapGames = new HashMap<String, List<Data>>();
+        for(Data data: dataList){
+            if(mapGames.containsKey(data.getScene())){
+                List<Data> listExistente = mapGames.get(data.getScene());
+                listExistente.add(data);
+            }else{
+                List<Data> newList = new ArrayList<>();
+                newList.add(data);
+                mapGames.put(data.getScene(),newList);
+            }
+
+        }
+
+        Map<String, List<Data>> mapFilteredGames = new HashMap<String, List<Data>>();
+        for (Map.Entry<String, List<Data>>  data : mapGames.entrySet()) {
+            List<Data> listDatos = data.getValue();
+            if(listDatos.size() >1 ){
+                mapFilteredGames.put(data.getKey(),data.getValue());
+            }
+        }
+        List<String> listaConDatos = new ArrayList();
+        for (Iterator<Map.Entry<String, List<Data>>> entries = mapFilteredGames.entrySet().iterator(); entries.hasNext(); ) {
+            Map.Entry<String, List<Data>> data = entries.next();
+            List<Data> listDatos = data.getValue();
+            List<Double> listaTiempos = new ArrayList();
+            List<Integer> listaClicks = new ArrayList();
+            List<Integer> listMaxAcceleration = new ArrayList();
+            List<Integer> listaMaxSpeed = new ArrayList();
+            List<Integer> listaNumErrors = new ArrayList();
+            for(Data d: listDatos){
+                listaTiempos.add(d.getTime_opened());
+                listaClicks.add(d.getNumber_clicks());
+                listMaxAcceleration.add(d.getMax_acceleration());
+                listaMaxSpeed.add(d.getMax_speed());
+                listaNumErrors.add(d.getNumber_errors());
+            }
+
+            String stringTiempos = "time opened-" + data.getKey();
+            for(int i=0; i<listaTiempos.size();i++){
+                stringTiempos+= "-" + listaTiempos.get(i);
+            }
+            listaConDatos.add(stringTiempos);
+
+            String stringClicks = "number of clicks-"+ data.getKey();
+            int sumaclicks = 0;
+            for(int i=0; i<listaClicks.size();i++){
+                stringClicks+= "-" + listaClicks.get(i);
+                sumaclicks+= listaClicks.get(i);
+            }
+            if(sumaclicks>0){
+                listaConDatos.add(stringClicks);
+            }
+
+            String stringAcc = "max acceleration mouse px/s2-"+ data.getKey();
+            for(int i=0; i<listMaxAcceleration.size();i++){
+                stringAcc+= "-" + listMaxAcceleration.get(i);
+            }
+            listaConDatos.add(stringAcc);
+
+            String stringSpeed = "max speed mouse px/s2-"+ data.getKey();
+            for(int i=0; i<listaMaxSpeed.size();i++){
+                stringSpeed+= "-" + listaMaxSpeed.get(i);
+            }
+            listaConDatos.add(stringSpeed);
+
+            String stringErrors = "number of errors-" + data.getKey();
+            for(int i=0; i<listaNumErrors.size();i++){
+                stringErrors+= "-" + listaNumErrors.get(i);
+            }
+            listaConDatos.add(stringErrors);
+        }
+        model.addAttribute("listaConDatos", listaConDatos);
+        return "/institution/informationuser";
     }
 
 }

@@ -373,33 +373,8 @@ public class CarerController extends DemcareController {
                 stringErrors+= "-" + listaNumErrors.get(i);
             }
             listaConDatos.add(stringErrors);
-
-           /* mapGraph.put("time opened" + "-" +data.getKey(),listaTiempos);
-            mapGraph.put("number of clicks" + "-" +data.getKey(),listaClicks);
-            mapGraph.put("max acceleration mouse" + "-" +data.getKey(),listMaxAcceleration);
-            mapGraph.put("max speed mouse" + "-" +data.getKey(),listaMaxSpeed);
-            mapGraph.put("number of errors" + "-" +data.getKey(),listaNumErrors);*/
-            //aádimos el resto de listas
         }
-
-      /*  List<String> listaConDatos = new ArrayList();
-        for (Iterator<Map.Entry<String, List>> entries = mapGraph.entrySet().iterator(); entries.hasNext(); ) {
-            Map.Entry<String, List> data = entries.next();
-            String numeros = "";
-            int counter = 0;
-            for(Object num: data.getValue()){
-                if(counter == 0){
-                    counter++;
-                    numeros += String.valueOf(num);
-                }else{
-                    numeros += '-' + String.valueOf(num);
-                }
-            }
-            String dato = data.getKey()+ '-' +numeros;
-            listaConDatos.add(dato);
-        }*/
-
         model.addAttribute("listaConDatos", listaConDatos);
-        return "/cuidador/information.html";
+        return "/cuidador/informationuser.html";
     }
 }

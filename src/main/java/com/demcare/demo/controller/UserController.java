@@ -32,7 +32,7 @@ public class UserController extends DemcareController {
 
     @RequestMapping(value = "/singup", method = RequestMethod.GET)
     public String signup(Model model) {
-        model.addAttribute("rolesList", rolesService.getRoles());
+        model.addAttribute("rolesList", rolesService.getRolesSimple());
         model.addAttribute("user", new User());
         return "singup";
     }
@@ -50,10 +50,22 @@ public class UserController extends DemcareController {
         if (result.hasErrors()) {
             return "singup";
         }
+        if(user.getRole().equals("INSTITUCION")){
+            user.setRole("ROLE_INSTITUCION");
+        }else if(user.getRole().equals("ADMIN")){
+            user.setRole("ROLE_ADMIN");
+        } else if(user.getRole().equals("CUIDADOR")){
+            user.setRole("ROLE_CUIDADOR");
+        } else {
+            user.setRole("ROLE_JUGADOR");
+        }
+
         userService.register(user);
-        if(user.getRole().equals("ROLE_INSTITUCION")){
+        if(user.getRole().equals("INSTITUCION")){
             userService.addAsociationGames(user);
         }
+
+
         UsernamePasswordAuthenticationToken a = securityService.autoLogin(user.getMail(), user.getPasswordConfirm());
         return "redirect:home";
     }
