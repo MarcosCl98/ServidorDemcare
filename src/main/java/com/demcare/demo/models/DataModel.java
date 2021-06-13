@@ -28,12 +28,12 @@ public class DataModel implements Serializable {
     @JsonProperty("maxSpeed")
     @Getter
     @Setter
-    private double maxSpeed;
+    private int maxSpeed;
 
     @JsonProperty("maxAceleration")
     @Getter
     @Setter
-    private double maxAceleration;
+    private int maxAceleration;
 
     @JsonProperty("numberOfErrors")
     @Getter

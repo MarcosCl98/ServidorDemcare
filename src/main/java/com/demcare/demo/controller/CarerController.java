@@ -316,22 +316,21 @@ public class CarerController extends DemcareController {
 
         }
 
-        Map<String, List> mapGraph = new HashMap<String, List>();
-        for (Iterator<Map.Entry<String, List<Data>>> entries = mapGames.entrySet().iterator(); entries.hasNext(); ) {
-            Map.Entry<String, List<Data>> data = entries.next();
+        Map<String, List<Data>> mapFilteredGames = new HashMap<String, List<Data>>();
+        for (Map.Entry<String, List<Data>>  data : mapGames.entrySet()) {
             List<Data> listDatos = data.getValue();
-            if(listDatos.size() <=1 ){
-                mapGames.remove(data.getKey());
+            if(listDatos.size() >1 ){
+                mapFilteredGames.put(data.getKey(),data.getValue());
             }
         }
         List<String> listaConDatos = new ArrayList();
-        for (Iterator<Map.Entry<String, List<Data>>> entries = mapGames.entrySet().iterator(); entries.hasNext(); ) {
+        for (Iterator<Map.Entry<String, List<Data>>> entries = mapFilteredGames.entrySet().iterator(); entries.hasNext(); ) {
             Map.Entry<String, List<Data>> data = entries.next();
             List<Data> listDatos = data.getValue();
             List<Double> listaTiempos = new ArrayList();
             List<Integer> listaClicks = new ArrayList();
-            List<Double> listMaxAcceleration = new ArrayList();
-            List<Double> listaMaxSpeed = new ArrayList();
+            List<Integer> listMaxAcceleration = new ArrayList();
+            List<Integer> listaMaxSpeed = new ArrayList();
             List<Integer> listaNumErrors = new ArrayList();
             for(Data d: listDatos){
                 listaTiempos.add(d.getTime_opened());
@@ -348,18 +347,22 @@ public class CarerController extends DemcareController {
             listaConDatos.add(stringTiempos);
 
             String stringClicks = "number of clicks-"+ data.getKey();
+            int sumaclicks = 0;
             for(int i=0; i<listaClicks.size();i++){
                 stringClicks+= "-" + listaClicks.get(i);
+                sumaclicks+= listaClicks.get(i);
             }
-            listaConDatos.add(stringClicks);
+            if(sumaclicks>0){
+                listaConDatos.add(stringClicks);
+            }
 
-            String stringAcc = "max acceleration mouse-"+ data.getKey();
+            String stringAcc = "max acceleration mouse px/s2-"+ data.getKey();
             for(int i=0; i<listMaxAcceleration.size();i++){
                 stringAcc+= "-" + listMaxAcceleration.get(i);
             }
             listaConDatos.add(stringAcc);
 
-            String stringSpeed = "max speed mouse-"+ data.getKey();
+            String stringSpeed = "max speed mouse px/s2-"+ data.getKey();
             for(int i=0; i<listaMaxSpeed.size();i++){
                 stringSpeed+= "-" + listaMaxSpeed.get(i);
             }

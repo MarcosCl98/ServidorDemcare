@@ -39,11 +39,11 @@ public class Data implements Serializable {
 
     @Getter
     @Setter
-    private double max_speed;
+    private int max_speed;
 
     @Getter
     @Setter
-    private double max_acceleration;
+    private int max_acceleration;
 
     @Getter
     @Setter
