@@ -253,6 +253,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getUsersWithoutAsocciationWithAInstitution(List<User> users) {
+        Iterable<AssociationInstitutionUser> associationInstitutionUser = asociationInstitutionUserDao.findAll();
+        List<User> finalList = new ArrayList<>();
+
+        for(User u: users){
+            boolean asociado = false;
+            for(AssociationInstitutionUser a: associationInstitutionUser){
+                if(a.getUser().getId() == u.getId()){
+                    asociado = true;
+                }
+            }
+            if(!asociado){
+                finalList.add(u);
+            }
+        }
+
+        return finalList;
+    }
+
+    @Override
     public List<User> getAssociateCarers(Long idInstitution) {
         Iterable<User>  userList = getCarerList();
         Iterable<AssociationInstitutionUser> iterable = asociationInstitutionUserDao.findAll();

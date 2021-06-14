@@ -2,6 +2,18 @@
 <html lang="en">
 <head th:replace="fragments/head"/>
 <body>
+<script>
+
+/*  function check(){
+    a = document.getElementById("role");
+    if(a.value == "INSTITUCION"){
+      document.getElementById("localization").setAttribute("disabled", false);
+    }else if (a.value != "INSTITUCION"){
+      document.getElementById("localization").setAttribute("disabled", true);
+    }
+  }*/
+
+</script>
 <!-- Barra de Navegación superior -->
 <nav th:replace="fragments/nav"/>
 <div class="container">
@@ -10,7 +22,7 @@
     <div class="form-group">
       <label class="control-label col-sm-2" for=”role” th:text="#{user.role}">Role:</label>
       <div class="col-sm-10">
-        <select id="role" class="form-control" name="role">
+        <select id="role" class="form-control" name="role" onchange="check();" >
           <option th:each="role : ${rolesList}"
                   th:value="${role}"
                   th:text="${role}">

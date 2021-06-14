@@ -37,6 +37,8 @@ public interface UserService {
     List<User> getAssociateCarersWithoutUserAuthenticated(List<User> institucionesAsociadas, Long idUser);
     List<User> getAssociateUsers(Long idInstitution);
 
+    List<User> getUsersWithoutAsocciationWithAInstitution(List<User> users);
+
     /*Asociados a la institución pero no a un cuidador*/
     List<User> getNotAssociatedPlayersWithCarer(List<User> jugadoresNoAsociados, Long idInstitution);
     List<User> getNotAssociatedPlayers(User user);
