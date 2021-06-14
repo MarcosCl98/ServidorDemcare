@@ -27,9 +27,6 @@ public class PlayerController extends DemcareController {
     @Autowired
     private GameService gameService;
 
-    @Autowired
-    private SecurityService securityService;
-
     @RequestMapping(value = "/jugador/addphoto", method = RequestMethod.GET)
     public String addphotoJugador(Model model) {
         SecurityContext securityContext = SecurityContextHolder.getContext();

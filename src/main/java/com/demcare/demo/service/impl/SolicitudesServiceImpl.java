@@ -15,7 +15,6 @@ public class SolicitudesServiceImpl implements SolicitudesService {
     @Autowired
     SolicitudesDao solicitudesDao;
 
-
     @Override
     public void deleteSolicitude(Long id) {
         solicitudesDao.deleteById(id);

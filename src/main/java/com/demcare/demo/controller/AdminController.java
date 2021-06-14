@@ -1,10 +1,9 @@
 package com.demcare.demo.controller;
 
 import com.demcare.demo.entities.*;
-import com.demcare.demo.models.DataModel;
 import com.demcare.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -173,7 +172,7 @@ public class AdminController extends DemcareController {
     }
 
     @RequestMapping("/admin/listinformes" )
-    public String getJugadoresInformes(Model model, HttpServletRequest request){
+    public String getJugadoresInformes(Model model, HttpServletRequest request, Pageable pageable){
         List<User> jugadores = userService.getPlayerList();
         List<Game> juegos = gameService.findAll();
         List<String> juegosString = new ArrayList<>();
@@ -181,7 +180,8 @@ public class AdminController extends DemcareController {
             juegosString.add(game.getTitulo());
         }
         model.addAttribute("jugadoresAsocidados", jugadores);
-        model.addAttribute("juegos",juegosString);
+        model.addAttribute("juegos", juegosString);
+
         return "/admin/listinformes";
     }
 

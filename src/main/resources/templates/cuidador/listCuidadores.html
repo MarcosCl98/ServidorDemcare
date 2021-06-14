@@ -25,7 +25,7 @@
             <td th:text="${cuidador.surname}"></td>
             <td th:text="${cuidador.mail}"></td>
             <td>
-                <a th:href="${'/cuidador/listJugadores/' + cuidador.id}" >asociar pacientes</a>
+                <a th:href="${'/cuidador/listJugadores/' + cuidador.id}" th:text="${asociate.patienes}" >asociar pacientes</a>
             </td>
         </tr>
         </tbody>

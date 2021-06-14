@@ -5,7 +5,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="game")
 @NoArgsConstructor @AllArgsConstructor @Builder @ToString
 public class GameModel implements Serializable {
     @Id

@@ -1,6 +1,7 @@
 package com.demcare.demo.service;
 
 import com.demcare.demo.entities.User;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

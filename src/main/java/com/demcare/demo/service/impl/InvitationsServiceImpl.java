@@ -17,7 +17,6 @@ public class InvitationsServiceImpl implements InvitationsService {
     @Autowired
     InvitationsDao invitationsDao;
 
-
     @Override
     public void deleteInvitation(Long id) {
         invitationsDao.deleteById(id);

@@ -22,23 +22,6 @@ public class SingUpFormValidator implements Validator {
         User user = (User) o;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "mail", "Error.empty");
 
-        /*if (userService.findByMail(user.getMail()) != null) {
-            errors.rejectValue("mail", "Error.signup.email.duplicate");
-        }
-        if (user.getName().length() < 5 || user.getName().length() > 24) {
-            errors.rejectValue("name", "Error.signup.name.length");
-        }
-        if (user.getSurname().length() < 5 || user.getSurname().length() > 24) {
-            errors.rejectValue("surname", "Error.signup.surname.length");
-        }
-        if (user.getPassword().length() < 5 || user.getPassword().length() > 24) {
-            errors.rejectValue("password", "Error.signup.password.length");
-        }
-        if (!user.getPasswordConfirm().equals(user.getPassword())) {
-            errors.rejectValue("passwordConfirm",
-                    "Error.signup.passwordConfirm.coincidence");
-        }*/
-
         if(user.getRole().equals("ROLE_INSTITUCION")){
             if (userService.findByName(user.getName()) != null) {
                 errors.rejectValue("name", "Error.signup.email.duplicate");

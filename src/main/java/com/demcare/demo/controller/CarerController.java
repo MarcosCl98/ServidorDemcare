@@ -1,7 +1,6 @@
 package com.demcare.demo.controller;
 
 import com.demcare.demo.entities.*;
-import com.demcare.demo.models.CharDataModel;
 import com.demcare.demo.models.UserModel;
 import com.demcare.demo.service.*;
 import com.demcare.demo.util.FileUploadUtil;
@@ -12,7 +11,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
