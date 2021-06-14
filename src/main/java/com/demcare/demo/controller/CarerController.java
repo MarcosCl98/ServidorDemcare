@@ -188,17 +188,13 @@ public class CarerController extends DemcareController {
     public String setUser(@Validated UserModel userModel, BindingResult result, Model
             model, HttpServletRequest request) {
         User user = new User();
-        user.setRole(userModel.getRole());
+        user.setRole("ROLE_JUGADOR");
         user.setName(userModel.getName());
         user.setSurname(userModel.getSurname());
         user.setMail(userModel.getMail());
         user.setPassword(userModel.getPassword());
         user.setPasswordConfirm(userModel.getPasswordConfirm());
         userService.register(user);
-        /*signUpFormValidator.validate(user, result);
-        if (result.hasErrors()) {
-            return "singup";
-        }*/
         model.addAttribute("rolesList", rolesService.getRoles());
 
 
@@ -220,11 +216,11 @@ public class CarerController extends DemcareController {
         associationCarerPlayerService.save(asociation);
 
         AssociationInstitutionUser asociationInstitution = new AssociationInstitutionUser();
-        asociationInstitution.setUserInstitution(userService.findByName(userModel.getInstitucion()));
-        asociationInstitution.setUser(user);
-        associationInstitutionUserService.save(asociationInstitution);
-
-
+        if(userModel.getInstitucion()!=null){
+            asociationInstitution.setUserInstitution(userService.findByName(userModel.getInstitucion()));
+            asociationInstitution.setUser(user);
+            associationInstitutionUserService.save(asociationInstitution);
+        }
 
         File folder = new File("src/main/resources/static/html/" );
         File[] files = folder.listFiles();
@@ -375,6 +371,6 @@ public class CarerController extends DemcareController {
             listaConDatos.add(stringErrors);
         }
         model.addAttribute("listaConDatos", listaConDatos);
-        return "/cuidador/informationuser.html";
+        return "/cuidador/information";
     }
 }
