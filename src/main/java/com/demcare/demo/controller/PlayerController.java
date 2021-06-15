@@ -35,7 +35,7 @@ public class PlayerController extends DemcareController {
         User user = userService.findByMail(username);
         model.addAttribute("user",user);
         String s = user.getPhotosImagePath();
-        return "/jugador/addphoto";
+        return "jugador/addphoto";
     }
 
     @RequestMapping(value = "/jugador/addphoto", method = RequestMethod.POST)
@@ -64,7 +64,7 @@ public class PlayerController extends DemcareController {
         String username = authentication.getName();
         User user = userService.findByMail(username);
         model.addAttribute("userList", userService.getInvitations(user.getId()));
-        return "/jugador/listInvitations";
+        return "jugador/listInvitations";
     }
 
     @RequestMapping("/jugador/accept/{id}" )
@@ -85,7 +85,7 @@ public class PlayerController extends DemcareController {
         User user = userService.findByMail(username);
         model.addAttribute("gameList", gameService.findActiveGames(user.getId()) );
         model.addAttribute("user", user.getId() );
-        return "/jugador/playgames" ;
+        return "jugador/playgames" ;
     }
 
 }

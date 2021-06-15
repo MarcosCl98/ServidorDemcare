@@ -519,21 +519,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getNotAssociatedPlayers(User user) {
-        Iterable<AssociationCarerPlayer> iterable = associationCarerPlayerDao.findAll();
+        Iterable<AssociationCarerPlayer> iterable = associationCarerPlayerDao.findByCarerUser(user);
         List <User> list = new ArrayList<User>();
         List <User> allJugadores = getPlayerList();
         List <User> list2 = new ArrayList<User>();
         List <User> finalList = new ArrayList<User>();
-        for(AssociationCarerPlayer a: iterable){
-            if(a.getCarerUser().getId() == user.getId()){
-                list.add(a.getPlayerUser());
-            }
-        }
+
 
         for(User jugador: allJugadores){
             boolean asociado = false;
-            for(User jugadorAsociado: list){
-                if(jugador.getId() == jugadorAsociado.getId()){
+            for(AssociationCarerPlayer jugadorAsociado: iterable){
+                System.out.println(jugadorAsociado.getCarerUser().getId());
+                if(jugador.getId() == jugadorAsociado.getPlayerUser().getId()){
                     asociado = true;
                 }
             }

@@ -44,7 +44,7 @@ public class InstitutionController extends DemcareController {
         String username = authentication.getName();
         User user = userService.findByMail(username);
         model.addAttribute("userList", userService.getAssociateUsers(user.getId()));
-        return "/institution/list";
+        return "institution/list";
     }
 
     @RequestMapping("/institution/listUsersToInvite")
@@ -56,7 +56,7 @@ public class InstitutionController extends DemcareController {
         List<User> users = userService.getUsersWithoutInvitation(user.getId());
         model.addAttribute("userList", userService.getUsersWithoutAsocciationWithAInstitution(users));
         model.addAttribute("invitatedUsers", userService.getUsersWithInvitationAndRequest(user.getId()));
-        return "/institution/listUsersToInvite";
+        return "institution/listUsersToInvite";
     }
 
 
@@ -77,7 +77,7 @@ public class InstitutionController extends DemcareController {
         String username = authentication.getName();
         User user = userService.findByMail(username);
         model.addAttribute("userList", userService.getSolicitudes(user.getId()));
-        return "/institution/listSolicitudes" ;
+        return "institution/listSolicitudes" ;
     }
 
     @RequestMapping("/institution/listCuidadores")
@@ -87,7 +87,7 @@ public class InstitutionController extends DemcareController {
         String username = authentication.getName();
         User user = userService.findByMail(username);
         model.addAttribute("cuidadores", userService.getAssociateCarers(user.getId()));
-        return "/institution/listCuidadores";
+        return "institution/listCuidadores";
     }
 
     @RequestMapping("/institution/listJugadores/{id}" )
@@ -108,7 +108,7 @@ public class InstitutionController extends DemcareController {
         List<User> jugadoresNoAsociados = userService.getNotAssociatedPlayers(user); //jugadores no asociados al cuidador seleccionado
         List<User> jugadoresNoAsociadosAsociados = userService.getNotAssociatedPlayersWithCarer(jugadoresNoAsociados,institution.getId()); //jugadores asociados a la misma institucion
         model.addAttribute("jugadoresNoAsociados", jugadoresNoAsociadosAsociados);
-        return "/institution/listJugadores";
+        return "institution/listJugadores";
     }
 
     @RequestMapping("/institution/asociate/{id}" )
@@ -147,7 +147,7 @@ public class InstitutionController extends DemcareController {
         }
         model.addAttribute("gameList", games );
         model.addAttribute("user", user.getId() );
-        return "/institution/listgames";
+        return "institution/listgames";
     }
 
     @RequestMapping("/institution/suspend/{id}" )
@@ -162,7 +162,7 @@ public class InstitutionController extends DemcareController {
                 associationInstitutionGameService.suspend(id);
             }
         }
-        return "redirect:/institution/listgames";
+        return "redirect:institution/listgames";
     }
 
     @RequestMapping("/institution/activate/{id}" )
@@ -212,7 +212,7 @@ public class InstitutionController extends DemcareController {
         }
         model.addAttribute("jugadoresAsocidados", jugadoresAsocidados);
         model.addAttribute("juegos",juegosString);
-        return "/institution/listinformes";
+        return "institution/listinformes";
     }
 
     @RequestMapping("/institution/information/{id}/{gameString}" )
@@ -302,7 +302,7 @@ public class InstitutionController extends DemcareController {
             listaConDatos.add(stringErrors);
         }
         model.addAttribute("listaConDatos", listaConDatos);
-        return "/institution/informationuser";
+        return "institution/informationuser";
     }
 
 }

@@ -51,7 +51,7 @@ public class AdminController extends DemcareController {
     @RequestMapping("/admin/list")
     public String getList(Model model){
         model.addAttribute("userList", userService.getAdminList() );
-        return "/admin/list";
+        return "admin/list";
     }
 
     @RequestMapping("/admin/listgames")
@@ -62,7 +62,7 @@ public class AdminController extends DemcareController {
         String username = authentication.getName();
         User user = userService.findByMail(username);
         model.addAttribute("user", user.getId() );
-        return "/admin/listgames";
+        return "admin/listgames";
     }
 
     @RequestMapping("/admin/delete/{id}" )
@@ -154,7 +154,7 @@ public class AdminController extends DemcareController {
     @RequestMapping(value="/admin/addgame")
     public String getUser(Model model){
         model.addAttribute("game", new Game());
-        return "/admin/addgame";
+        return "admin/addgame";
     }
 
     @RequestMapping(value="/admin/addgame", method= RequestMethod.POST )
@@ -182,7 +182,7 @@ public class AdminController extends DemcareController {
         model.addAttribute("jugadoresAsocidados", jugadores);
         model.addAttribute("juegos", juegosString);
 
-        return "/admin/listinformes";
+        return "admin/listinformes";
     }
 
     @RequestMapping("/admin/information/{id}/{gameString}" )
@@ -272,7 +272,7 @@ public class AdminController extends DemcareController {
             listaConDatos.add(stringErrors);
         }
         model.addAttribute("listaConDatos", listaConDatos);
-        return "/admin/information";
+        return "admin/information";
     }
 
 }

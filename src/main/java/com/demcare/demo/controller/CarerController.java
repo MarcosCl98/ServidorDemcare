@@ -58,7 +58,7 @@ public class CarerController extends DemcareController {
         String username = authentication.getName();
         User user = userService.findByMail(username);
         model.addAttribute("cuidadorList", userService.getInstitutionsWithAsociation(user.getId()));
-        return "/cuidador/list";
+        return "cuidador/list";
     }
 
     @RequestMapping("/cuidador/listInstitutions")
@@ -69,7 +69,7 @@ public class CarerController extends DemcareController {
         User user = userService.findByMail(username);
         model.addAttribute("userList", userService.getNotRequestInstitutions(user.getId()));
         model.addAttribute("requestInstitutions", userService.getRequestInstitutions((user.getId())));
-        return "/cuidador/listInstitutions";
+        return "cuidador/listInstitutions";
     }
 
     @RequestMapping(value = "/cuidador/addphoto", method = RequestMethod.GET)
@@ -80,7 +80,7 @@ public class CarerController extends DemcareController {
         User user = userService.findByMail(username);
         model.addAttribute("user",user);
         String s = user.getPhotosImagePath();
-        return "/cuidador/addphoto";
+        return "cuidador/addphoto";
     }
 
     @RequestMapping(value = "/cuidador/addphoto", method = RequestMethod.POST)
@@ -109,7 +109,7 @@ public class CarerController extends DemcareController {
         String username = authentication.getName();
         User user = userService.findByMail(username);
         model.addAttribute("userList", userService.getInvitations(user.getId()));
-        return "/cuidador/listInvitations";
+        return "cuidador/listInvitations";
     }
 
     @RequestMapping("/cuidador/accept/{id}" )
@@ -141,7 +141,7 @@ public class CarerController extends DemcareController {
         model.addAttribute("rolesList", rolesService.getRoleJugador());
         model.addAttribute("institutionList", userService.getInstitutionsAssociated(user));
         model.addAttribute("user", new UserModel());
-        return "/cuidador/add";
+        return "cuidador/add";
     }
 
     @RequestMapping("/cuidador/listCuidadores")
@@ -150,15 +150,15 @@ public class CarerController extends DemcareController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         User user = userService.findByMail(username);
-        model.addAttribute("cuidadores", userService.getCarerListWithoutUserSession(user));
-        return "/cuidador/listCuidadores";
+        List<User> cuidadores = userService.getCarerListWithoutUserSession(user);
+        model.addAttribute("cuidadores", cuidadores);
+        return "cuidador/listCuidadores";
     }
 
     @RequestMapping("/cuidador/listJugadores/{id}" )
     public String getJugadores(Model model,@PathVariable Long id, HttpServletRequest request){
         User user = userService.findById(id);
         request.getSession().setAttribute("cuidador",user);
-
         return "redirect:/cuidador/listJugadores";
     }
 
@@ -171,7 +171,7 @@ public class CarerController extends DemcareController {
         User cuidador1 = userService.findByMail(username);
         List<User> jugadoresAsocidados = userService.getAssociatedUsers(cuidador1, cuidador2);
         model.addAttribute("jugadoresAsocidados", jugadoresAsocidados);
-        return "/cuidador/listJugadores";
+        return "cuidador/listJugadores";
     }
 
     @RequestMapping("/cuidador/asociate/{id}" )
@@ -260,7 +260,7 @@ public class CarerController extends DemcareController {
     @RequestMapping(value="/cuidador/download")
     public String download(Model model, HttpServletRequest request){
         model.addAttribute("path", request.getSession().getAttribute("pathdownload"));
-        return "/cuidador/download";
+        return "cuidador/download";
     }
 
     @RequestMapping("/cuidador/listJugadoresInformes" )
@@ -279,7 +279,7 @@ public class CarerController extends DemcareController {
         }
         model.addAttribute("jugadoresAsocidados", jugadoresAsocidados);
         model.addAttribute("juegos",juegosString);
-        return "/cuidador/listJugadoresInformes";
+        return "cuidador/listJugadoresInformes";
     }
 
     @RequestMapping("/cuidador/information/{id}/{gameString}" )
@@ -369,6 +369,6 @@ public class CarerController extends DemcareController {
             listaConDatos.add(stringErrors);
         }
         model.addAttribute("listaConDatos", listaConDatos);
-        return "/cuidador/information";
+        return "cuidador/information";
     }
 }

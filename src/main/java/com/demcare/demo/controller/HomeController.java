@@ -68,7 +68,7 @@ public class HomeController extends DemcareController {
 
 
         UsernamePasswordAuthenticationToken a = securityService.autoLogin(user.getMail(), user.getPasswordConfirm());
-        return "redirect:home";
+        return "redirect:/home";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -84,7 +84,7 @@ public class HomeController extends DemcareController {
         User user = userService.findByMail(username);
         if(user.isSuspend()){
             new SecurityContextLogoutHandler().logout(request, response, authentication);
-            return "redirect:suspended";
+            return "redirect:/suspended";
         }else{
             model.addAttribute("name",user.getName());
         }
@@ -100,12 +100,12 @@ public class HomeController extends DemcareController {
         if(user!= null){
             if(user.isSuspend()){
                 new SecurityContextLogoutHandler().logout(request, response, authentication);
-                return "redirect:suspended";
+                return "redirect:/suspended";
             }
         }else{
             model.addAttribute("user",false);
         }
-        return "redirect:/index";
+        return "redirect:index";
     }
 
     @RequestMapping(value = { "/suspended" }, method = RequestMethod.GET)
@@ -115,7 +115,7 @@ public class HomeController extends DemcareController {
 
     @RequestMapping(value = { "/games/index" }, method = RequestMethod.GET)
     public String matching(Model model) {
-        return "/games/index";
+        return "games/index";
     }
 
     @RequestMapping("/" )

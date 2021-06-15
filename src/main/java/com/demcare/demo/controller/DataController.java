@@ -61,7 +61,7 @@ public class DataController extends DemcareController {
 
 
         dataService.save(data);
-        return "/home";
+        return "home";
     }
 
 

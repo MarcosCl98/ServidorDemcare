@@ -6,7 +6,6 @@
 <!-- Barra de Navegación superior -->
 <head th:replace="fragments/nav"/>
 
-
 <div class="container">
   <h2 th:text="#{carers}">Cuidadores</h2>
   <p th:text="#{carer.list.asociates}">Cuidadores asociados a tu institución:</p>
@@ -25,7 +24,7 @@
             <td th:text="${cuidador.surname}"></td>
             <td th:text="${cuidador.mail}"></td>
             <td>
-                <a th:href="${'/cuidador/listJugadores/' + cuidador.id}" th:text="${asociate.patienes}" >asociar pacientes</a>
+                <a th:href="${'/cuidador/listJugadores/' + cuidador.id}" th:text="#{asociate.patients}" >asociar pacientes</a>
             </td>
         </tr>
         </tbody>
