@@ -14,7 +14,7 @@ public class UserModel implements Serializable {
     private Long id;
 
     @Getter@Setter
-    private String mail;
+    private String username;
 
     @Getter@Setter
     private String password;
@@ -45,7 +45,7 @@ public class UserModel implements Serializable {
     public String getPhotosImagePath() {
         if (photos == null || id == null) return null;
 
-        return "/img/" + mail+ "/" + photos;
+        return "/img/" + username+ "/" + photos;
     }
 
 

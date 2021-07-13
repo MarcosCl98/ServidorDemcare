@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @CrossOrigin(origins = "*")
-public class DataController extends DemcareController {
+public class DataController {
 
     @Autowired
     private GameService gameService;

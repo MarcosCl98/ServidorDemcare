@@ -5,8 +5,6 @@ import com.demcare.demo.dao.*;
 import com.demcare.demo.entities.*;
 import com.demcare.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +29,10 @@ public class UserServiceImpl implements UserService {
     private AssociationCarerPlayerDao associationCarerPlayerDao;
 
     @Autowired
-    private InvitationsDao invitationsInstitutionsDao;
+    private InvitationDao invitationsInstitutionsDao;
 
     @Autowired
-    private SolicitudesDao solicitudesDao;
+    private SolicitudeDao solicitudeDao;
 
     @Autowired
     private PasswordEncoderBean passwordEncoderBean;
@@ -45,8 +43,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByMail(String mail) {
-        return userDao.findByMail(mail);
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username);
     }
 
     @Override
@@ -61,12 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(User user) {
-        if(userDao.findByMail(user.getMail()) != null) {
-            //TODO: hacer expceciones y validaciones
-            //throw new EEmailExistsException
-        }
         user.setPassword(passwordEncoderBean.encoder().encode(user.getPassword()));
-
         userDao.save(user);
         return user;
     }
@@ -87,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void invitateUser(Long idInstitution, Long id) {
-        InvitationsInstitutions invitacion = new InvitationsInstitutions();
+        Invitation invitacion = new Invitation();
         invitacion.setUser( userDao.findById(id).get());
         invitacion.setUserInstitution( userDao.findById(idInstitution).get());
         invitationsInstitutionsDao.save(invitacion);
@@ -95,10 +88,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void solicitudeInstitution(Long idInstitution, Long id) {
-        SolicitudesInstitutions solicitud = new SolicitudesInstitutions();
+        Solicitude solicitud = new Solicitude();
         solicitud.setUserInstitution(userDao.findById(id).get());
         solicitud.setUser( userDao.findById(idInstitution).get());
-        solicitudesDao.save(solicitud);
+        solicitudeDao.save(solicitud);
     }
 
     @Override
@@ -107,16 +100,32 @@ public class UserServiceImpl implements UserService {
         asociacion.setUser( userDao.findById(id).get());
         asociacion.setUserInstitution( userDao.findById(idInstitution).get());
         asociationInstitutionUserDao.save(asociacion);
-        Iterable<InvitationsInstitutions> list =  invitationsInstitutionsDao.findAll();
-        for(InvitationsInstitutions l: list){
+        Iterable<Invitation> list =  invitationsInstitutionsDao.findAll();
+        for(Invitation l: list){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
                 invitationsInstitutionsDao.deleteById(l.getId());
             }
         }
-        Iterable<SolicitudesInstitutions> list2 =  solicitudesDao.findAll();
-        for(SolicitudesInstitutions l: list2){
+        Iterable<Solicitude> list2 =  solicitudeDao.findAll();
+        for(Solicitude l: list2){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
-                solicitudesDao.deleteById(l.getId());
+                solicitudeDao.deleteById(l.getId());
+            }
+        }
+    }
+
+    @Override
+    public void rejectInvitation(Long idInstitution, Long id) {
+        Iterable<Invitation> list =  invitationsInstitutionsDao.findByUserInstitution(userDao.findById(idInstitution).get());
+        for(Invitation l: list){
+            if(l.getUser().getId() == id){
+                invitationsInstitutionsDao.deleteById(l.getId());
+            }
+        }
+        Iterable<Solicitude> list2 =  solicitudeDao.findByUserInstitution(userDao.findById(idInstitution).get());
+        for(Solicitude l: list2){
+            if(l.getUser().getId() == id){
+                solicitudeDao.deleteById(l.getId());
             }
         }
     }
@@ -127,16 +136,33 @@ public class UserServiceImpl implements UserService {
         asociacion.setUser( userDao.findById(id).get());
         asociacion.setUserInstitution( userDao.findById(idInstitution).get());
         asociationInstitutionUserDao.save(asociacion);
-        Iterable<SolicitudesInstitutions> list =  solicitudesDao.findAll();
-        for(SolicitudesInstitutions l: list){
+        Iterable<Solicitude> list =  solicitudeDao.findAll();
+        for(Solicitude l: list){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
-                solicitudesDao.deleteById(l.getId());
+                solicitudeDao.deleteById(l.getId());
             }
         }
-        Iterable<InvitationsInstitutions> list2 =  invitationsInstitutionsDao.findAll();
-        for(InvitationsInstitutions l: list2){
+        Iterable<Invitation> list2 =  invitationsInstitutionsDao.findAll();
+        for(Invitation l: list2){
             if(l.getUser().getId() == id && l.getUserInstitution().getId() == idInstitution){
                 invitationsInstitutionsDao.deleteById(l.getId());
+            }
+        }
+    }
+
+    @Override
+    public void rejectSolicitude(Long idInstitution, Long id) {
+        Iterable<Invitation> list =  invitationsInstitutionsDao.findByUserInstitution(userDao.findById(idInstitution).get());
+        for(Invitation l: list){
+            if(l.getUser().getId() == id){
+                invitationsInstitutionsDao.deleteById(l.getId());
+            }
+        }
+        Iterable<Solicitude> list2 =  solicitudeDao.findByUserInstitution(userDao.findById(idInstitution).get());
+        for(Solicitude l: list2){
+            long l2 = l.getUser().getId();
+            if(l2 == id){
+                solicitudeDao.deleteById(l.getId());
             }
         }
     }
@@ -148,7 +174,6 @@ public class UserServiceImpl implements UserService {
         association.setCarerUser(userDao.findById(idCarer).get());
         associationCarerPlayerDao.save(association);
     }
-
 
     @Override
     public List<User> getAdminList() {
@@ -258,7 +283,6 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsersWithoutAsocciationWithAInstitution(List<User> users) {
         Iterable<AssociationInstitutionUser> associationInstitutionUser = asociationInstitutionUserDao.findAll();
         List<User> finalList = new ArrayList<>();
-
         for(User u: users){
             boolean asociado = false;
             for(AssociationInstitutionUser a: associationInstitutionUser){
@@ -355,12 +379,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUsersWithInvitationAndRequest(Long idInstitution) {
         Iterable<User>  userList = getUsersWithoutAsociation(idInstitution);
-        Iterable<InvitationsInstitutions> iterable = invitationsInstitutionsDao.findAll();
+        Iterable<Invitation> iterable = invitationsInstitutionsDao.findAll();
         List <User> list = new ArrayList<User>();
 
         for (User item : userList) {
             boolean invitado = false;
-            for (InvitationsInstitutions it : iterable) {
+            for (Invitation it : iterable) {
                 if(it.getUser().getId() == item.getId() && it.getUserInstitution().getId() == idInstitution){
                     invitado = true;
                 }
@@ -369,11 +393,8 @@ public class UserServiceImpl implements UserService {
                 list.add(item);
             }
         }
-
         return list;
     }
-
-
 
     @Override
     public List<User> getUsersWithoutAsociation(Long idInstitution) {
@@ -398,12 +419,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getUsersWithoutInvitation(Long idInstitution) {
         Iterable<User>  userList = getUsersWithoutAsociation(idInstitution);
-        Iterable<InvitationsInstitutions> iterable = invitationsInstitutionsDao.findAll();
+        Iterable<Invitation> iterable = invitationsInstitutionsDao.findAll();
         List <User> list = new ArrayList<User>();
 
         for (User item : userList) {
             boolean invitado = false;
-            for (InvitationsInstitutions it : iterable) {
+            for (Invitation it : iterable) {
                 if(it.getUser().getId() == item.getId() && it.getUserInstitution().getId() == idInstitution){
                     invitado = true;
                 }
@@ -418,7 +439,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addAsociationGames(User user) {
         Iterable<Game> gameList = gameDao.findAll();
-
         for(Game g: gameList){
             AssociationInstitutionGame asociacion = new AssociationInstitutionGame();
             asociacion.setGame(g);
@@ -427,13 +447,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     @Override
     public List<User> getInvitations(Long idUser) {
-        Iterable<InvitationsInstitutions> iterable = invitationsInstitutionsDao.findAll();
+        Iterable<Invitation> iterable = invitationsInstitutionsDao.findAll();
         List <User> list = new ArrayList<User>();
 
-        for (InvitationsInstitutions it : iterable) {
+        for (Invitation it : iterable) {
             if(it.getUser().getId() == idUser){
                 list.add(it.getUserInstitution());
             }
@@ -444,15 +463,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getSolicitudes(Long idUser) {
-        Iterable<SolicitudesInstitutions> iterable = solicitudesDao.findAll();
+        Iterable<Solicitude> iterable = solicitudeDao.findAll();
         List <User> list = new ArrayList<User>();
-
-        for (SolicitudesInstitutions it : iterable) {
+        for (Solicitude it : iterable) {
             if(it.getUserInstitution().getId() == idUser){
                 list.add(it.getUser());
             }
         }
-
         return list;
     }
 
@@ -464,13 +481,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getRequestInstitutions(Long idUser) {
-        Iterable<SolicitudesInstitutions> iterable = solicitudesDao.findAll();
+        Iterable<Solicitude> iterable = solicitudeDao.findAll();
         List <User> listAllInstitutions = getInstitutions();
         List <User> list = new ArrayList<User>();
 
         for(User institution: listAllInstitutions){
             boolean solicitada = false;
-            for(SolicitudesInstitutions solicitude: iterable){
+            for(Solicitude solicitude: iterable){
                 if(institution.getId() == solicitude.getUserInstitution().getId() && idUser == solicitude.getUser().getId()){
                     solicitada = true;
                 }
@@ -479,19 +496,18 @@ public class UserServiceImpl implements UserService {
                 list.add(institution);
             }
         }
-
         return list;
     }
 
     @Override
     public List<User> getNotRequestInstitutions(Long idUser) {
-        Iterable<SolicitudesInstitutions> iterable = solicitudesDao.findAll();
+        Iterable<Solicitude> iterable = solicitudeDao.findAll();
         List <User> listAllInstitutions = getInstitutions();
         List <User> list = new ArrayList<User>();
         List <User> list2 = new ArrayList<User>();
         for(User institution: listAllInstitutions){
             boolean solicitada = false;
-            for(SolicitudesInstitutions solicitude: iterable){
+            for(Solicitude solicitude: iterable){
                 if(institution.getId() == solicitude.getUserInstitution().getId() && idUser == solicitude.getUser().getId()){
                     solicitada = true;
                 }
@@ -513,18 +529,14 @@ public class UserServiceImpl implements UserService {
                 list2.add(usuariosWithoutRequest);
             }
         }
-
         return list2;
     }
 
     @Override
     public List<User> getNotAssociatedPlayers(User user) {
         Iterable<AssociationCarerPlayer> iterable = associationCarerPlayerDao.findByCarerUser(user);
-        List <User> list = new ArrayList<User>();
         List <User> allJugadores = getPlayerList();
         List <User> list2 = new ArrayList<User>();
-        List <User> finalList = new ArrayList<User>();
-
 
         for(User jugador: allJugadores){
             boolean asociado = false;

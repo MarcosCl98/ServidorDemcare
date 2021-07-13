@@ -6,12 +6,17 @@
 <!-- Barra de Navegación superior -->
 <head th:replace="fragments/nav"/>
 <div class="container" style="text-align: center">
-    <h2 th:text="#{welcome.message}"></h2>
-    <p th:if="${user == true}"  th:text="#{user.authenticated}">
-        Usuario Autenticado como:
+    <h2  th:text="#{welcome.message}"></h2>
+    <p>
         <b th:inline="text"> [[${#httpServletRequest.remoteUser}]] </b>
     </p>
+
+    <p th:text="#{welcome.description1}"></p>
+    <p th:text="#{welcome.description2}"></p>
+    <img src="/img/example.png">
+    <p></p>
+    <img src="/img/demcare.png">
+
 </div>
-<footer th:replace="fragments/footer"/>
 </body>
 </html>

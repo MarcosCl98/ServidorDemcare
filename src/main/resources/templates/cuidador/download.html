@@ -5,10 +5,32 @@
 
 <!-- Barra de Navegación superior -->
 <head th:replace="fragments/nav"/>
+<script  th:inline="javascript" type="text/javascript">
+  var tokenCode = [[${tokenCode}]]
+  function download_token() {
+    var data = "<!DOCTYPE html>\n" +
+            "<html lang=\"es\">\n" +
+            "<head>\n" +
+            "    <meta charset=\"utf-8\">\n" +
+            "    <title>HTML</title>\n" +
+            "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+            "    <meta http-equiv=\"refresh\" content=\"0; url=http://ec2-35-180-47-105.eu-west-3.compute.amazonaws.com:8090/token/"+ tokenCode +"\" />\n" +
+            "    <link rel=\"stylesheet\" href=\"estilo.css\">\n" +
+            "</head>\n" +
+            "\n" +
+            "<body>\n" +
+            "</body>\n" +
+            "</html>";
 
+    var hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/html;charset=utf-8,' + encodeURI(data);
+    hiddenElement.download = 'token.html';
+    hiddenElement.click();
+  }
+</script>
 <div class="container">
   <h2 th:text="#{download.html}">Descarga el html asociado al paciente</h2>
-  <a download th:href="@{${path}}" th:text="#{download}">
+  <a download onclick="download_token()" th:text="#{download}">
     Descargar
   </a>
 </div>

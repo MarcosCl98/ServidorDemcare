@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @CrossOrigin(origins = "*")
-public class TokenController extends DemcareController {
+public class TokenController  {
 
     @Autowired
     private SecurityService securityService;

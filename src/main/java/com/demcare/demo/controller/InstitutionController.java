@@ -22,7 +22,7 @@ import java.util.*;
 
 @Controller
 @CrossOrigin(origins = "*")
-public class InstitutionController extends DemcareController {
+public class InstitutionController {
 
     @Autowired
     private UserService userService;
@@ -42,8 +42,10 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
-        model.addAttribute("userList", userService.getAssociateUsers(user.getId()));
+        User user = userService.findByUsername(username);
+        if(user!=null){
+            model.addAttribute("userList", userService.getAssociateUsers(user.getId()));
+        }
         return "institution/list";
     }
 
@@ -52,10 +54,12 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         List<User> users = userService.getUsersWithoutInvitation(user.getId());
-        model.addAttribute("userList", userService.getUsersWithoutAsocciationWithAInstitution(users));
-        model.addAttribute("invitatedUsers", userService.getUsersWithInvitationAndRequest(user.getId()));
+        if(users!=null){
+            model.addAttribute("userList", userService.getUsersWithoutAsocciationWithAInstitution(users));
+            model.addAttribute("invitatedUsers", userService.getUsersWithInvitationAndRequest(user.getId()));
+        }
         return "institution/listUsersToInvite";
     }
 
@@ -65,8 +69,10 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
-        userService.invitateUser(user.getId(),id);
+        User user = userService.findByUsername(username);
+        if(user!=null) {
+            userService.invitateUser(user.getId(), id);
+        }
         return "redirect:/institution/listUsersToInvite";
     }
 
@@ -75,7 +81,7 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("userList", userService.getSolicitudes(user.getId()));
         return "institution/listSolicitudes" ;
     }
@@ -85,7 +91,7 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("cuidadores", userService.getAssociateCarers(user.getId()));
         return "institution/listCuidadores";
     }
@@ -104,7 +110,7 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User institution = userService.findByMail(username);
+        User institution = userService.findByUsername(username);
         List<User> jugadoresNoAsociados = userService.getNotAssociatedPlayers(user); //jugadores no asociados al cuidador seleccionado
         List<User> jugadoresNoAsociadosAsociados = userService.getNotAssociatedPlayersWithCarer(jugadoresNoAsociados,institution.getId()); //jugadores asociados a la misma institucion
         model.addAttribute("jugadoresNoAsociados", jugadoresNoAsociadosAsociados);
@@ -124,8 +130,20 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
-        userService.acceptSolicitude(user.getId(),id);
+        User user = userService.findByUsername(username);
+        if(user!=null){
+            userService.acceptSolicitude(user.getId(),id);
+        }
+        return "redirect:/institution/listSolicitudes";
+    }
+
+    @RequestMapping("/institution/reject/{id}" )
+    public String rejectSolicitude(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        userService.rejectSolicitude(user.getId(),id);
         return "redirect:/institution/listSolicitudes";
     }
 
@@ -134,7 +152,7 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         List<AssociationInstitutionGame> list = associationInstitutionGameService.findByInstitution(user);
         List<GameModel> games = new ArrayList<>();
         for(AssociationInstitutionGame a: list){
@@ -155,14 +173,17 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+
+        User user = userService.findByUsername(username);
         List<AssociationInstitutionGame> list = associationInstitutionGameService.findByInstitution(user);
         for(AssociationInstitutionGame a: list){
             if(a.getId() == id){
                 associationInstitutionGameService.suspend(id);
             }
         }
-        return "redirect:institution/listgames";
+
+
+        return "redirect:/institution/listgames";
     }
 
     @RequestMapping("/institution/activate/{id}" )
@@ -170,7 +191,8 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+
+        User user = userService.findByUsername(username);
         List<AssociationInstitutionGame> list = associationInstitutionGameService.findByInstitution(user);
         for(AssociationInstitutionGame a: list){
             if(a.getId() == id){
@@ -186,7 +208,7 @@ public class InstitutionController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User institucion = userService.findByMail(username);
+        User institucion = userService.findByUsername(username);
 
         List<User> cuidadoresAsociados = userService.getAssociateCarers(institucion.getId());
         List<Game> juegos = gameService.findAll();

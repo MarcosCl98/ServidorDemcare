@@ -8,7 +8,7 @@ public class RolesServiceImpl implements RolesService {
 
     String[] roles = {"ROLE_ADMIN","ROLE_CUIDADOR","ROLE_INSTITUCION","ROLE_JUGADOR"};
     String[] rolesSimple = {"CUIDADOR","INSTITUCION"};
-    String[] roles2 = {"JUGADOR"};
+    String[] rolJugador = {"JUGADOR"};
 
     @Override
     public String[] getRoles() {
@@ -22,6 +22,6 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     public String[] getRoleJugador() {
-        return roles2;
+        return rolJugador;
     }
 }

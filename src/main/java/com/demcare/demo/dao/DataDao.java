@@ -14,5 +14,4 @@ import java.util.Optional;
 public interface DataDao extends CrudRepository<Data, Long>, JpaSpecificationExecutor<Data> {
     Data save(Data data);
     List<Data> findByUser(User user);
-    List<Data> findByGame(Game game);
 }

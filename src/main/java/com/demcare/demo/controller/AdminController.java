@@ -19,7 +19,7 @@ import java.util.*;
 
 @Controller
 @CrossOrigin(origins = "*")
-public class AdminController extends DemcareController {
+public class AdminController  {
 
     @Autowired
     private UserService userService;
@@ -34,10 +34,10 @@ public class AdminController extends DemcareController {
     private TokenService tokenService;
 
     @Autowired
-    private SolicitudesService solicitudesService;
+    private SolicitudeService solicitudeService;
 
     @Autowired
-    private InvitationsService invitationsService;
+    private InvitationService invitationService;
 
     @Autowired
     private GameService gameService;
@@ -60,7 +60,7 @@ public class AdminController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("user", user.getId() );
         return "admin/listgames";
     }
@@ -96,25 +96,25 @@ public class AdminController extends DemcareController {
         }
 
         //Borramos solicitudes
-        List<SolicitudesInstitutions> listSolicitudes = solicitudesService.findByUser(userToDelete);
-        for(SolicitudesInstitutions a: listSolicitudes){
-            solicitudesService.deleteSolicitude(a.getId());
+        List<Solicitude> listSolicitudes = solicitudeService.findByUser(userToDelete);
+        for(Solicitude a: listSolicitudes){
+            solicitudeService.deleteSolicitude(a.getId());
         }
 
-        listSolicitudes = solicitudesService.findByUserInstitution(userToDelete);
-        for(SolicitudesInstitutions a: listSolicitudes){
-            solicitudesService.deleteSolicitude(a.getId());
+        listSolicitudes = solicitudeService.findByUserInstitution(userToDelete);
+        for(Solicitude a: listSolicitudes){
+            solicitudeService.deleteSolicitude(a.getId());
         }
 
         //Borramos invitaciones
-        List<InvitationsInstitutions> listInvitations = invitationsService.findByUser(userToDelete);
-        for(InvitationsInstitutions a: listInvitations){
-            invitationsService.deleteInvitation(a.getId());
+        List<Invitation> listInvitations = invitationService.findByUser(userToDelete);
+        for(Invitation a: listInvitations){
+            invitationService.deleteInvitation(a.getId());
         }
 
-        listInvitations = invitationsService.findByUserInstitution(userToDelete);
-        for(InvitationsInstitutions a: listInvitations){
-            invitationsService.deleteInvitation(a.getId());
+        listInvitations = invitationService.findByUserInstitution(userToDelete);
+        for(Invitation a: listInvitations){
+            invitationService.deleteInvitation(a.getId());
         }
 
         //Borramos juegos si es una institucion
@@ -152,20 +152,20 @@ public class AdminController extends DemcareController {
     }
 
     @RequestMapping(value="/admin/addgame")
-    public String getUser(Model model){
+    public String getGame(Model model){
         model.addAttribute("game", new Game());
         return "admin/addgame";
     }
 
     @RequestMapping(value="/admin/addgame", method= RequestMethod.POST )
-    public String setUser(@Validated Game game, BindingResult result, Model
-            model, HttpServletRequest request) {
+    public String setGame(@RequestBody Game game) {
         gameService.save(game);
         List<User> instituciones = userService.getInstitutions();
         for(User u: instituciones){
             AssociationInstitutionGame asociacion = new AssociationInstitutionGame();
             asociacion.setInstitution(u);
             asociacion.setGame(game);
+            asociacion.setDesactivate(true);
             associationInstitutionGameService.save(asociacion);
         }
         return "redirect:/home";

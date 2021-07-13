@@ -18,7 +18,8 @@
       <tr>
         <th th:text="#{user.name}">Nombre</th>
         <th th:text="#{user.surname}">Apellidos</th>
-          <th th:text="#{user.mail}">Email</th>
+          <th th:text="#{user.username}">Usuario</th>
+          <th class="col-md-1"> </th>
           <th class="col-md-1"> </th>
       </tr>
     </thead>
@@ -26,9 +27,12 @@
         <tr th:each="userInvitated : ${userList}">
             <td th:text="${userInvitated.name}"></td>
             <td th:text="${userInvitated.surname}"></td>
-            <td th:text="${userInvitated.mail}"></td>
+            <td th:text="${userInvitated.username}"></td>
             <td>
-                <a th:href="${'/jugador/accept/' + userInvitated.id}" >aceptar</a>
+                <a  th:href="${'/jugador/accept/' + userInvitated.id}" >aceptar</a>
+            </td>
+            <td>
+                <a th:href="${'/jugador/reject/' + userInvitated.id}" >rechazar</a>
             </td>
       </tr>
 	</tbody>

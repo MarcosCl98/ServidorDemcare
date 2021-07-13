@@ -54,7 +54,7 @@ public class SecurityService {
 
     public void logByToken(String tokenCode){
         User user = tokenService.findByCode(tokenCode).getUser();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getMail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 userDetails, user.getPassword(), userDetails.getAuthorities());

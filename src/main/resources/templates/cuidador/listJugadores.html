@@ -15,7 +15,7 @@
         <tr>
             <th th:text="#{user.name}">Nombre</th>
             <th th:text="#{user.surname}">Apellidos</th>
-            <th th:text="#{user.mail}">Email</th>
+            <th th:text="#{user.username}">Usuario</th>
             <th class="col-md-1"> </th>
         </tr>
         </thead>
@@ -23,7 +23,7 @@
         <tr th:each="jugadoresAsocidados : ${jugadoresAsocidados}">
             <td th:text="${jugadoresAsocidados.name}"></td>
             <td th:text="${jugadoresAsocidados.surname}"></td>
-            <td th:text="${jugadoresAsocidados.mail}"></td>
+            <td th:text="${jugadoresAsocidados.username}"></td>
             <td>
                 <a th:href="${'/cuidador/asociate/' + jugadoresAsocidados.id}" >asociar</a>
             </td>

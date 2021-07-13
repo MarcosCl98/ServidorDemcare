@@ -20,13 +20,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserDao userDao;
 
     @Override
-    public UserDetails loadUserByUsername(String mail) throws UsernameNotFoundException{
-        User user = userDao.findByMail(mail);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+        User user = userDao.findByUsername(username);
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole()));
 
         return new org.springframework.security.core.userdetails.User(
-                user.getMail(), user.getPassword(), grantedAuthorities);
+                user.getUsername(), user.getPassword(), grantedAuthorities);
     }
 }

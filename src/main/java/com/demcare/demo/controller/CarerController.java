@@ -5,6 +5,7 @@ import com.demcare.demo.models.UserModel;
 import com.demcare.demo.service.*;
 import com.demcare.demo.util.FileUploadUtil;
 import com.demcare.demo.util.SecureTokenGenerator;
+import com.demcare.demo.validators.SingUpFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -50,14 +48,19 @@ public class CarerController extends DemcareController {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private SingUpFormValidator signUpFormValidator;
+
 
     @RequestMapping("/cuidador/list")
     public String getCuidadorList(Model model){
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
-        model.addAttribute("cuidadorList", userService.getInstitutionsWithAsociation(user.getId()));
+        User user = userService.findByUsername(username);
+        if(user!=null){
+            model.addAttribute("cuidadorList", userService.getInstitutionsWithAsociation(user.getId()));
+        }
         return "cuidador/list";
     }
 
@@ -66,7 +69,7 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("userList", userService.getNotRequestInstitutions(user.getId()));
         model.addAttribute("requestInstitutions", userService.getRequestInstitutions((user.getId())));
         return "cuidador/listInstitutions";
@@ -77,7 +80,7 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("user",user);
         String s = user.getPhotosImagePath();
         return "cuidador/addphoto";
@@ -88,14 +91,14 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
 
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         user.setPhotos("image.png");
 
         User savedUser = userService.save(user);
 
-        String uploadDir = "src/main/resources/static/img/" + savedUser.getMail();
+        String uploadDir = "src/main/resources/static/img/" + savedUser.getUsername();
 
         FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 
@@ -107,7 +110,7 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("userList", userService.getInvitations(user.getId()));
         return "cuidador/listInvitations";
     }
@@ -117,8 +120,20 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
-        userService.acceptInvitation(id,user.getId());
+        User user = userService.findByUsername(username);
+        if(user != null){
+            userService.acceptInvitation(id,user.getId());
+        }
+        return "redirect:/cuidador/listInvitations";
+    }
+
+    @RequestMapping("/cuidador/reject/{id}" )
+    public String rejectInvitation(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        userService.rejectInvitation(id,user.getId());
         return "redirect:/cuidador/listInvitations";
     }
 
@@ -127,8 +142,10 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
-        userService.solicitudeInstitution(user.getId(),id);
+        User user = userService.findByUsername(username);
+        if(user!=null){
+            userService.solicitudeInstitution(user.getId(),id);
+        }
         return "redirect:/cuidador/listInstitutions";
     }
 
@@ -137,7 +154,7 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("rolesList", rolesService.getRoleJugador());
         model.addAttribute("institutionList", userService.getInstitutionsAssociated(user));
         model.addAttribute("user", new UserModel());
@@ -149,7 +166,7 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         List<User> cuidadores = userService.getCarerListWithoutUserSession(user);
         model.addAttribute("cuidadores", cuidadores);
         return "cuidador/listCuidadores";
@@ -168,7 +185,7 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User cuidador1 = userService.findByMail(username);
+        User cuidador1 = userService.findByUsername(username);
         List<User> jugadoresAsocidados = userService.getAssociatedUsers(cuidador1, cuidador2);
         model.addAttribute("jugadoresAsocidados", jugadoresAsocidados);
         return "cuidador/listJugadores";
@@ -185,13 +202,31 @@ public class CarerController extends DemcareController {
     @RequestMapping(value="/cuidador/add", method=RequestMethod.POST )
     public String setUser(@Validated UserModel userModel, BindingResult result, Model
             model, HttpServletRequest request) {
+        validateRequiredParam(userModel.getUsername(), "username");
+        validateRequiredParam(userModel.getPassword(), "password");
+        validateRequiredParam(userModel.getName(), "name");
+        validateRequiredParam(userModel.getSurname(), "surname");
+
         User user = new User();
         user.setRole("ROLE_JUGADOR");
         user.setName(userModel.getName());
         user.setSurname(userModel.getSurname());
-        user.setMail(userModel.getMail());
+        user.setUsername(userModel.getUsername());
         user.setPassword(userModel.getPassword());
         user.setPasswordConfirm(userModel.getPasswordConfirm());
+        signUpFormValidator.validate(user, result);
+        if (result.hasErrors()) {
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            Authentication authentication = securityContext.getAuthentication();
+            String username = authentication.getName();
+            User institucion = userService.findByUsername(username);
+            model.addAttribute("rolesList", rolesService.getRoleJugador());
+            model.addAttribute("institutionList", userService.getInstitutionsAssociated(institucion));
+            model.addAttribute("user", new UserModel());
+            return "cuidador/add";
+        }
+
+
         userService.register(user);
         model.addAttribute("rolesList", rolesService.getRoles());
 
@@ -208,7 +243,7 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User carer = userService.findByMail(username);
+        User carer = userService.findByUsername(username);
         asociation.setCarerUser(carer);
         asociation.setPlayerUser(user);
         associationCarerPlayerService.save(asociation);
@@ -219,47 +254,13 @@ public class CarerController extends DemcareController {
             asociationInstitution.setUser(user);
             associationInstitutionUserService.save(asociationInstitution);
         }
-
-        File folder = new File("src/main/resources/static/html/" );
-        File[] files = folder.listFiles();
-        if(files!=null) {
-            for(File f: files) {
-                f.delete();
-            }
-        }
-
-        String uploadDir = "src/main/resources/static/html/" + user.getName() + ".html";
-        File file = new File( uploadDir);
-        String data = "<!DOCTYPE html>\n" +
-                "<html lang=\"es\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"utf-8\">\n" +
-                "    <title>HTML</title>\n" +
-                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
-                "    <meta http-equiv=\"refresh\" content=\"0; url=http://localhost:8080/token/"+ tokenCode +"\" />\n" +
-                "    <link rel=\"stylesheet\" href=\"estilo.css\">\n" +
-                "</head>\n" +
-                "\n" +
-                "<body>\n" +
-                "</body>\n" +
-                "</html>";
-
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        writer.write(data);
-        writer.close();
-        String path = "../html/" + user.getName()+".html";
-        request.getSession().setAttribute("pathdownload",path);
+        request.getSession().setAttribute("tokenCode",tokenCode);
         return "redirect:/cuidador/download";
     }
 
     @RequestMapping(value="/cuidador/download")
     public String download(Model model, HttpServletRequest request){
-        model.addAttribute("path", request.getSession().getAttribute("pathdownload"));
+        model.addAttribute("tokenCode", request.getSession().getAttribute("tokenCode"));
         return "cuidador/download";
     }
 
@@ -269,7 +270,7 @@ public class CarerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User cuidador = userService.findByMail(username);
+        User cuidador = userService.findByUsername(username);
 
         List<User> jugadoresAsocidados = userService.getAssociatedUsersToCarer(cuidador);
         List<Game> juegos = gameService.findAll();

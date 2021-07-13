@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface UserDao extends CrudRepository<User, Long>, JpaSpecificationExecutor<User> {
 
-    User findByMail(String mail);
+    User findByUsername(String username);
     User findByName(String name);
     Optional<User> findById(Long id);
     void deleteById(Long id);

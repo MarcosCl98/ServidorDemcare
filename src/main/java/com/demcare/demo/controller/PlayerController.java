@@ -19,7 +19,7 @@ import java.io.IOException;
 
 @Controller
 @CrossOrigin(origins = "*")
-public class PlayerController extends DemcareController {
+public class PlayerController {
 
     @Autowired
     private UserService userService;
@@ -32,7 +32,7 @@ public class PlayerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("user",user);
         String s = user.getPhotosImagePath();
         return "jugador/addphoto";
@@ -43,14 +43,14 @@ public class PlayerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
 
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         user.setPhotos("image.png");
 
         User savedUser = userService.save(user);
 
-        String uploadDir = "src/main/resources/static/img/" + savedUser.getMail();
+        String uploadDir = "src/main/resources/static/img/" + savedUser.getUsername();
 
         FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 
@@ -62,7 +62,7 @@ public class PlayerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("userList", userService.getInvitations(user.getId()));
         return "jugador/listInvitations";
     }
@@ -72,8 +72,18 @@ public class PlayerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         userService.acceptInvitation(id,user.getId());
+        return "redirect:/jugador/listInvitations";
+    }
+
+    @RequestMapping("/jugador/reject/{id}" )
+    public String rejectInvitation(@PathVariable Long id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        userService.rejectInvitation(id,user.getId());
         return "redirect:/jugador/listInvitations";
     }
 
@@ -82,7 +92,7 @@ public class PlayerController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         model.addAttribute("gameList", gameService.findActiveGames(user.getId()) );
         model.addAttribute("user", user.getId() );
         return "jugador/playgames" ;

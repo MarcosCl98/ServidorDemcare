@@ -15,7 +15,7 @@ public class User implements Serializable {
     private Long id;
 
     @Getter@Setter
-    private String mail;
+    private String username;
 
     @Getter@Setter
     private String password;
@@ -42,8 +42,7 @@ public class User implements Serializable {
     @Transient
     public String getPhotosImagePath() {
         if (photos == null || id == null) return null;
-
-        return "/img/" + mail+ "/" + photos;
+        return "/img/" + username+ "/" + photos;
     }
 
 

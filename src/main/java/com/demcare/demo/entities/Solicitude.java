@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Entity
 @Table(name="solicitudes_institutions")
 @NoArgsConstructor @AllArgsConstructor @Builder @ToString
-public class SolicitudesInstitutions implements Serializable {
+public class Solicitude implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)

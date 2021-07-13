@@ -41,19 +41,20 @@ public class HomeController extends DemcareController {
     }
 
     @RequestMapping(value = "/singup", method = RequestMethod.POST)
-    public String signup(@Validated User user, BindingResult result, Model
-            model) {
+    public String signup(@Validated User user, BindingResult result) {
 
-        validateRequiredParam(user.getMail(), "mail");
+        validateRequiredParam(user.getUsername(), "username");
         validateRequiredParam(user.getPassword(), "password");
         validateRequiredParam(user.getName(), "name");
         validateRequiredParam(user.getSurname(), "surname");
 
         signUpFormValidator.validate(user, result);
         if (result.hasErrors()) {
-            return "singup";
+               return "singup";
         }
-        if(user.getRole().equals("INSTITUCION") || user.getRole().equals("INSTITUTION") ){
+        if(user.getRole().equals("ADMIN") ){
+            user.setRole("ROLE_ADMIN");
+        } else if(user.getRole().equals("INSTITUCION") || user.getRole().equals("INSTITUTION") ){
             user.setRole("ROLE_INSTITUCION");
         } else if(user.getRole().equals("CUIDADOR") || user.getRole().equals("CARER") ){
             user.setRole("ROLE_CUIDADOR");
@@ -66,8 +67,7 @@ public class HomeController extends DemcareController {
             userService.addAsociationGames(user);
         }
 
-
-        UsernamePasswordAuthenticationToken a = securityService.autoLogin(user.getMail(), user.getPasswordConfirm());
+        UsernamePasswordAuthenticationToken a = securityService.autoLogin(user.getUsername(), user.getPasswordConfirm());
         return "redirect:/home";
     }
 
@@ -81,7 +81,7 @@ public class HomeController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         if(user.isSuspend()){
             new SecurityContextLogoutHandler().logout(request, response, authentication);
             return "redirect:/suspended";
@@ -96,7 +96,7 @@ public class HomeController extends DemcareController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
-        User user = userService.findByMail(username);
+        User user = userService.findByUsername(username);
         if(user!= null){
             if(user.isSuspend()){
                 new SecurityContextLogoutHandler().logout(request, response, authentication);

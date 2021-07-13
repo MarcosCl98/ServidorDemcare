@@ -20,12 +20,15 @@ public class SingUpFormValidator implements Validator {
     @Override
     public void validate(Object o, Errors errors) {
         User user = (User) o;
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "mail", "Error.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "Error.empty");
 
         if(user.getRole().equals("ROLE_INSTITUCION")){
             if (userService.findByName(user.getName()) != null) {
                 errors.rejectValue("name", "Error.signup.email.duplicate");
             }
+        }
+        if(userService.findByUsername(user.getUsername())!=null){
+            errors.rejectValue("username", "Error.signup.email.duplicate");
         }
         if (user.getName().length() < 5 || user.getName().length() > 24) {
             errors.rejectValue("name", "Error.signup.name.length");

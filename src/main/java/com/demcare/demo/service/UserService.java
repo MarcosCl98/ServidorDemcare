@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface UserService {
-    User findByMail(String mail);
+    User findByUsername(String username);
     User findByName(String name);
     User findById(Long id);
     User register(User userEntity);
@@ -20,7 +20,9 @@ public interface UserService {
     void invitateUser(Long idInstitution, Long id);
     void solicitudeInstitution(Long idInstitution, Long id);
     void acceptInvitation(Long idInstitution, Long id);
+    void rejectInvitation(Long idInstitution, Long id);
     void acceptSolicitude(Long idInstitution, Long id);
+    void rejectSolicitude(Long idInstitution, Long id);
     void asociateCarerPlayer(Long idCarer, Long idPlayer);
 
     List<User> getAdminList();

@@ -18,7 +18,7 @@
       <tr>
         <th th:text="#{user.name}">Nombre</th>
         <th th:text="#{user.surname}">Apellidos</th>
-          <th th:text="#{user.mail}">Email</th>
+          <th th:text="#{user.username}">Username</th>
           <th th:text="#{user.role}">Role</th>
           <th th:text="#{user.suspend}">Estado</th>
 		<th class="col-md-1"> </th>
@@ -29,7 +29,7 @@
 	  <tr th:each="user : ${userList}">
 	    <td th:text="${user.name}"></td>
 	    <td th:text="${user.surname}"></td>
-          <td th:text="${user.mail}"></td>
+          <td th:text="${user.username}"></td>
           <td th:text="${user.role}"></td>
           <td th:if="${user.suspend}" th:text="#{user.stateSuspend}">Suspendida</td>
           <td th:if="${!user.suspend}" th:text="#{user.stateActive}">Activa</td>

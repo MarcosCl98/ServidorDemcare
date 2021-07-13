@@ -17,14 +17,14 @@
                 <tr>
                     <th th:text="#{user.name}">Nombre</th>
                     <th th:text="#{user.surname}">Apellidos</th>
-                    <th th:text="#{user.mail}">Email</th>
+                    <th th:text="#{user.username}">Email</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="user : ${cuidadorList}">
                     <td th:text="${user.name}"></td>
                     <td th:text="${user.surname}"></td>
-                    <td th:text="${user.mail}"></td>
+                    <td th:text="${user.username}"></td>
                 </tr>
                 </tbody>
             </table>

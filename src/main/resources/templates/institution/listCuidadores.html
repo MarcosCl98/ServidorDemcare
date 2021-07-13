@@ -15,7 +15,7 @@
         <tr>
             <th th:text="#{user.name}">Nombre</th>
             <th th:text="#{user.surname}">Apellidos</th>
-            <th th:text="#{user.mail}">Email</th>
+            <th th:text="#{user.username}">Usuario</th>
             <th class="col-md-1"> </th>
         </tr>
         </thead>
@@ -23,7 +23,7 @@
         <tr th:each="cuidador : ${cuidadores}">
             <td th:text="${cuidador.name}"></td>
             <td th:text="${cuidador.surname}"></td>
-            <td th:text="${cuidador.mail}"></td>
+            <td th:text="${cuidador.username}"></td>
             <td>
                 <a th:href="${'/institution/listJugadores/' + cuidador.id}" >asociar pacientes</a>
             </td>

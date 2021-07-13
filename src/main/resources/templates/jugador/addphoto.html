@@ -16,7 +16,7 @@
                 <tr>
                     <th th:text="#{user.name}">Nombre</th>
                     <th th:text="#{user.surname}">Apellidos</th>
-                    <th th:text="#{user.mail}">Email</th>
+                    <th th:text="#{user.username}">Username</th>
                     <th th:text="#{user.photo}">Foto</th>
                 </tr>
                 </thead>
@@ -24,7 +24,7 @@
                 <tr>
                     <td th:text="${user.name}"></td>
                     <td th:text="${user.surname}"></td>
-                    <td th:text="${user.mail}"></td>
+                    <td th:text="${user.username}"></td>
                     <td th:if="${user.photosImagePath != null}" > <img th:src="@{${user.photosImagePath}}" style="width:200px; height:200px;"/></td>
                     <td th:if="${user.photosImagePath == null}" th:text="#{user.without.photo}"></td>
                 </tr>

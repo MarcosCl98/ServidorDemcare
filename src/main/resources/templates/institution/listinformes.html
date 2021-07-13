@@ -22,7 +22,7 @@
         <tr>
             <th th:text="#{user.name}">Nombre</th>
             <th th:text="#{user.surname}">Apellidos</th>
-            <th th:text="#{user.mail}">Email</th>
+            <th th:text="#{user.username}">Usuario</th>
             <th class="col-md-1"> </th>
             <th class="col-md-1"> </th>
         </tr>
@@ -31,7 +31,7 @@
         <tr th:each="jugadoresAsocidados : ${jugadoresAsocidados}">
             <td th:text="${jugadoresAsocidados.name}"></td>
             <td th:text="${jugadoresAsocidados.surname}"></td>
-            <td th:text="${jugadoresAsocidados.mail}"></td>
+            <td th:text="${jugadoresAsocidados.username}"></td>
             <td>
                 <a th:text="#{view.report }" th:id="${'button'+jugadoresAsocidados.id}" th:onclick="'javascript:addGame(\''+ ${jugadoresAsocidados.id} +'\');'"> ver informes</a>
             </td>
