@@ -158,7 +158,7 @@ public class AdminController  {
     }
 
     @RequestMapping(value="/admin/addgame", method= RequestMethod.POST )
-    public String setGame(@RequestBody Game game) {
+    public String setGame(@Validated Game game) {
         gameService.save(game);
         List<User> instituciones = userService.getInstitutions();
         for(User u: instituciones){

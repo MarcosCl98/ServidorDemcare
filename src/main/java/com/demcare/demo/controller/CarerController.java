@@ -351,7 +351,7 @@ public class CarerController extends DemcareController {
                 listaConDatos.add(stringClicks);
             }
 
-            String stringAcc = "max acceleration mouse px/s2-"+ data.getKey();
+            String stringAcc = "max acceleration px/s2-"+ data.getKey();
             for(int i=0; i<listMaxAcceleration.size();i++){
                 stringAcc+= "-" + listMaxAcceleration.get(i);
             }
